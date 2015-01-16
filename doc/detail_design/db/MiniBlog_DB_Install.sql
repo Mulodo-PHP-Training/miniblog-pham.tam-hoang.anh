@@ -27,9 +27,12 @@ CREATE TABLE IF NOT EXISTS user(
 	address VARCHAR(200),
 	city VARCHAR(30),
 	email VARCHAR(50) NOT NULL,
-	mobile VARCHAR(20),	
-	created_dt DATETIME NOT NULL,
-	updated_dt DATETIME NOT NULL,
+	mobile VARCHAR(20),
+	`group` INT(11),
+	last_login INT(11),
+	login_hash VARCHAR(255),
+	created_at DATETIME NOT NULL,
+	updated_at DATETIME NOT NULL,
 
 	FULLTEXT INDEX(username, firstname, lastname),
 	PRIMARY KEY(id)
@@ -49,8 +52,8 @@ CREATE TABLE IF NOT EXISTS post(
 	image VARCHAR(100),
 	user_id int(11) NOT NULL,
 	status TINYINT NOT NULL,
-	created_dt DATETIME NOT NULL,
-	updated_dt DATETIME NOT NULL,
+	created_at DATETIME NOT NULL,
+	updated_at DATETIME NOT NULL,
 
 	FULLTEXT INDEX(title, description, content),
 	PRIMARY KEY(id),
@@ -68,8 +71,8 @@ CREATE TABLE IF NOT EXISTS comment(
 	content VARCHAR(250) NOT NULL,
 	user_id int(11) NOT NULL,
 	post_id int(11) NOT NULL,
-	created_dt DATETIME NOT NULL,
-	updated_dt DATETIME NOT NULL,
+	created_at DATETIME NOT NULL,
+	updated_at DATETIME NOT NULL,
 	
 	PRIMARY KEY(id),
 	FOREIGN KEY(user_id) REFERENCES user(id) ON DELETE CASCADE,
