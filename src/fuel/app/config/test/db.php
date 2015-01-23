@@ -6,11 +6,21 @@
  */
 
 return array(
-	'default' => array(
-		'connection'  => array(
-			'dsn'        => 'mysql:host=localhost;dbname=fuel_test',
-			'username'   => 'fuel_app',
-			'password'   => 'super_secret_password',
-		),
-	),
+    'default' => array(
+        'type'           => 'mysql',
+	    'connection'     => array(
+	        'hostname'       => 'localhost',
+	        'database'       => 'mini_blog',
+	        'username'       => 'root',
+	        'password'       => 'root',
+	        'persistent'     => false,
+	        'compress'       => false,
+	    ),
+	    'identifier'     => '`',
+	    'table_prefix'   => '',
+	    'charset'        => 'utf8',
+	    'enable_cache'   => true,
+	    'profiling'      => false,
+	    'readonly'       => false,
+    ),
 );
