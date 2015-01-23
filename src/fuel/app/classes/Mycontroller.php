@@ -1,6 +1,7 @@
 <?php
 class MyController extends Controller_Rest
 {
+	protected $format = 'json';
 	/**
 	 * 
 	 * get message error
