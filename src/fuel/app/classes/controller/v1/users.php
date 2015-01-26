@@ -40,8 +40,8 @@ class Controller_V1_Users extends MyController {
                 )
             );
 
-            if ($rest != STATUS_OK) {
-                $response = $this->get_response($rest);
+            if ($rest['code'] != STATUS_OK) {
+                $response = $this->get_response($rest['code'], '', $rest['message']);
             }
             else {
                 $data = Input::param();

@@ -121,9 +121,12 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		$username_or_email = trim($username_or_email) ?: trim(\Input::post(\Config::get('simpleauth.username_post_key', 'username')));
 		$password = trim($password) ?: trim(\Input::post(\Config::get('simpleauth.password_post_key', 'password')));
 
+		$res = '';
 		if (empty($username_or_email) or empty($password))
 		{
-			return ERROR_USERNAME_PWD_NULL;
+			$res['code']	= ERROR_USERNAME_PWD_NULL;
+			$res['message']	= MSG_USERNAME_PWD_NULL;
+			return $res;
 		}
 
 		$password = $this->hash_password($password);
@@ -136,7 +139,10 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			->from(\Config::get('simpleauth.table_name'))
 			->execute(\Config::get('simpleauth.db_connection'))->current();
 
-		return $user ?: ERROR_LOGIN_FAILED;
+		$res['code']	= ERROR_LOGIN_FAILED;
+		$res['message']	= MSG_LOGIN_FAILED;
+
+		return $user ?: $res;
 	}
 
 	/**
@@ -226,9 +232,12 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 	{
 		$password = trim($password);
 		$email = filter_var(trim($email), FILTER_VALIDATE_EMAIL);
+		$res = '';
 		if (empty($username) or empty($password) or empty($email))
 		{
-			return ERROR_VALIDATE;
+			$res['code'] = ERROR_VALIDATE;
+			$res['message'] = MSG_VALIDATE;
+			return $res;
 		}
 
 		$same_users = \DB::select_array(\Config::get('simpleauth.table_columns', array('*')))
@@ -241,11 +250,15 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		{
 			if (in_array(strtolower($email), array_map('strtolower', $same_users->current())))
 			{
-				return ERROR_EMAIL_EXIST;
+				$res['code'] = ERROR_EMAIL_EXIST;
+				$res['message'] = MSG_EMAIL_EXIST;
+				return $res;
 			}
 			else
 			{
-				return ERROR_USERNAME_EXIST;
+				$res['code'] = ERROR_USERNAME_EXIST;
+				$res['message'] = MSG_USERNAME_EXIST;
+				return $res;
 			}
 		}
 
@@ -270,7 +283,10 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		$result = \DB::insert(\Config::get('simpleauth.table_name'))
 			->set($user)
 			->execute(\Config::get('simpleauth.db_connection'));
-		return ($result[1] > 0) ? STATUS_OK : ERROR_INSERT_USER;
+		$res['code'] = ERROR_INSERT_USER;
+		$res['message'] = MSG_INSERT_USER;
+
+		return ($result[1] > 0) ? STATUS_OK : $res;
 	}
 
 	/**
