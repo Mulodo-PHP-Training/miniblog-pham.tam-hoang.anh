@@ -123,7 +123,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 
 		if (empty($username_or_email) or empty($password))
 		{
-			return false;
+			return ERROR_USERNAME_PWD_NULL;
 		}
 
 		$password = $this->hash_password($password);
@@ -136,7 +136,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			->from(\Config::get('simpleauth.table_name'))
 			->execute(\Config::get('simpleauth.db_connection'))->current();
 
-		return $user ?: false;
+		return $user ?: ERROR_LOGIN_FAILED;
 	}
 
 	/**
