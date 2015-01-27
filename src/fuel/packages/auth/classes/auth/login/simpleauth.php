@@ -124,13 +124,9 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		$res = '';
 		if (empty($username_or_email) or empty($password))
 		{
-<<<<<<< HEAD
 			$res['code']	= ERROR_USERNAME_PWD_NULL;
 			$res['message']	= MSG_USERNAME_PWD_NULL;
 			return $res;
-=======
-			return ERROR_USERNAME_PWD_NULL;
->>>>>>> master
 		}
 
 		$password = $this->hash_password($password);
@@ -143,14 +139,10 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 			->from(\Config::get('simpleauth.table_name'))
 			->execute(\Config::get('simpleauth.db_connection'))->current();
 
-<<<<<<< HEAD
 		$res['code']	= ERROR_LOGIN_FAILED;
 		$res['message']	= MSG_LOGIN_FAILED;
 
 		return $user ?: $res;
-=======
-		return $user ?: ERROR_LOGIN_FAILED;
->>>>>>> master
 	}
 
 	/**
