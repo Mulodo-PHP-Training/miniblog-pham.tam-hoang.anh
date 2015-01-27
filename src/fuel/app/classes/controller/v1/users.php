@@ -91,4 +91,8 @@ class Controller_V1_Users extends Controller_Base {
         return $response;
     }
 
+    public function put_logout() {
+
+    }
+
 }
