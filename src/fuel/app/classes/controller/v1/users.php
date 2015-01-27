@@ -61,17 +61,28 @@ class Controller_V1_Users extends Controller_Base {
         return $response;
     }
 
+    /**
+     *
+     * User Login
+     * param HTTP_METHOD POST
+     * @return json format
+     */
     public function post_signin() {
+    	// get params
         $username = Security::clean(Input::param('username'), $this->_filter);
         $password = Security::clean(Input::param('password'), $this->_filter);
+
+        // perform a login
         $res = Auth::login($username, $password);
+        // false
         if (isset($res['code'])) {
             $response = $this->get_response($res['code'], '', $res['message']);
-        } else {
+        } else { // true
             $data = $res;
             $message = 'Login successful!';
             $response = $this->get_response(STATUS_OK, $data, $message);
         }
+
         return $response;
     }
 
