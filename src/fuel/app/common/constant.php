@@ -32,6 +32,11 @@ define('MSG_EMAIL_EXIST', 'Email already exist');
 define('ERROR_INSERT_USER', '2003');
 define('MSG_INSERT_USER', 'Create new user failed');
 
+// USER HAS LOGGED
+define('ERROR_LOGGED_USER', '2004');
+define('MSG_LOGGED_USER', 'User has logged!');
+
+
 // GET ALL POST ERROR
 define('ERROR_GET_ALL_POST_FAILED', '2501');
 define('MSG_GET_ALL_POST_FAILED', 'Get all post error');

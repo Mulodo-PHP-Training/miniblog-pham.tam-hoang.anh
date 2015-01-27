@@ -6,6 +6,7 @@
  * @group User
  */
 class Test_Controller_V1_Users extends TestCase {
+    private $_link = 'http://miniblog.tam/v1/';
     /**
      *
      * test create user
@@ -13,7 +14,7 @@ class Test_Controller_V1_Users extends TestCase {
      *
      */
     public function test_create_user_ok() {
-        $link    = 'http://miniblog.tam/v1/users';
+        $link    = $this->_link.'users';
         $method    = 'POST';
         $params = array(
             'username'      => 'tam04',
@@ -41,7 +42,7 @@ class Test_Controller_V1_Users extends TestCase {
      * username is already exist
      */
     public function test_username_exist() {
-        $link    = 'http://miniblog.tam/v1/users';
+        $link    = $this->_link.'users';
         $method    = 'POST';
         $params = array(
             'username'      => 'phamtam',
@@ -67,7 +68,7 @@ class Test_Controller_V1_Users extends TestCase {
      * email is already exist
      */
     public function test_email_exist() {
-        $link    = 'http://miniblog.tam/v1/users';
+        $link    = $this->_link.'users';
         $method    = 'POST';
         $params = array(
             'username'      => 'tam04',
@@ -327,6 +328,120 @@ class Test_Controller_V1_Users extends TestCase {
         );
     }
 
+    /**
+     *
+     * test login ok
+     * method POST
+     */
+    public function test_login_ok() {
+        $link   = $this->_link.'users/signin';
+        $method = 'POST';
+        $params = array(
+            'username' => 'phamtam2',
+            'password' => '123456'
+        );
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * test username or password null
+     * @param array $params
+     * @dataProvider login_validate_error_provider
+     */
+    public function test_login_validate_error($params) {
+        $link   = $this->_link.'users/signin';
+        $method = 'POST';
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_USERNAME_PWD_NULL, $res->meta->code);
+    }
+
+    /**
+     *
+     * data provider for test_login_validate_error
+     */
+    public function login_validate_error_provider() {
+        return array(
+            //username and password null
+            array(
+                array(
+                    'username'  => '',
+                    'password'  => ''
+                )
+            ),
+            // username null
+            array(
+                array(
+                    'username'  => '',
+                    'password'  => '123456'
+                )
+            ),
+            // password null
+            array(
+                array(
+                    'username'  => 'phamtam2',
+                    'password'  => ''
+                )
+            ),
+        );
+    }
+
+    /**
+     *
+     * username, password incorrect
+     * @param array $params
+     * @dataProvider login_incorrect_provider
+     */
+    public function test_login_incorrect($params) {
+        $link   = $this->_link.'users/signin';
+        $method = 'POST';
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_LOGIN_FAILED, $res->meta->code);
+    }
+
+    /**
+     *
+     * dataProvider for test_login_incorrect
+     */
+    public function login_incorrect_provider() {
+        return array(
+            //sql injection
+            array(
+                array(
+                    'username'  => "' or '1'='1",
+                    'password'  => '123456'
+                )
+            ),
+            // sql injection
+            array(
+                array(
+                    'username'  => "' or '1'='1--",
+                    'password'  => '123456'
+                )
+            ),
+            // username, password incorrect
+            array(
+                array(
+                    'username'  => 'phamtam',
+                    'password'  => '123456'
+                )
+            ),
+        );
+    }
+
+    /**
+     *
+     * get response body from $link
+     * @param string $link
+     * @param string $method
+     * @param array $params
+     *
+     * @return object
+     */
     private function curl($link, $method = 'GET', $params = '') {
         // init
         $curl = Request::forge($link, 'curl');

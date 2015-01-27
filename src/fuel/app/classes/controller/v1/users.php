@@ -68,7 +68,12 @@ class Controller_V1_Users extends Controller_Base {
      * @return json format
      */
     public function post_signin() {
-    	// get params
+        // check user login?
+        if (Auth::check()) { // yes
+            $response = $this->get_response(ERROR_LOGGED_USER, '', MSG_LOGGED_USER);
+            return $response;
+        }
+        // get params
         $username = Security::clean(Input::param('username'), $this->_filter);
         $password = Security::clean(Input::param('password'), $this->_filter);
 
