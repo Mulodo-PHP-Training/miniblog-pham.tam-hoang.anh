@@ -40,7 +40,7 @@ class Controller_V1_Users extends Controller_Base {
                 )
             );
 
-            if ($rest['code'] != STATUS_OK) {
+            if ($rest['code'] !== STATUS_OK) {
                 $response = $this->get_response($rest['code'], '', $rest['message']);
             }
             else {
@@ -58,6 +58,20 @@ class Controller_V1_Users extends Controller_Base {
             $response = $this->get_response(ERROR_VALIDATE, '', $message);
         }
 
+        return $response;
+    }
+
+    public function post_signin() {
+        $username = Security::clean(Input::param('username'), $this->_filter);
+        $password = Security::clean(Input::param('password'), $this->_filter);
+        $res = Auth::login($username, $password);
+        if (isset($res['code'])) {
+            $response = $this->get_response($res['code'], '', $res['message']);
+        } else {
+            $data = $res;
+            $message = 'Login successful!';
+            $response = $this->get_response(STATUS_OK, $data, $message);
+        }
         return $response;
     }
 

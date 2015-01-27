@@ -118,8 +118,8 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 	 */
 	public function validate_user($username_or_email = '', $password = '')
 	{
-		$username_or_email = trim($username_or_email) ?: trim(\Input::post(\Config::get('simpleauth.username_post_key', 'username')));
-		$password = trim($password) ?: trim(\Input::post(\Config::get('simpleauth.password_post_key', 'password')));
+		$username_or_email = trim($username_or_email) ? trim($username_or_email) : trim(\Input::post(\Config::get('simpleauth.username_post_key', 'username')));
+		$password = trim($password) ? trim($password) : trim(\Input::post(\Config::get('simpleauth.password_post_key', 'password')));
 
 		$res = '';
 		if (empty($username_or_email) or empty($password))
@@ -142,7 +142,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		$res['code']	= ERROR_LOGIN_FAILED;
 		$res['message']	= MSG_LOGIN_FAILED;
 
-		return $user ?: $res;
+		return $user ? $user : $res;
 	}
 
 	/**
@@ -154,12 +154,13 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 	 */
 	public function login($username_or_email = '', $password = '')
 	{
-		if ( ! ($this->user = $this->validate_user($username_or_email, $password)))
+		$this->user = $this->validate_user($username_or_email, $password);
+		if ( isset($this->user['code']))
 		{
-			$this->user = \Config::get('simpleauth.guest_login', true) ? static::$guest_login : false;
+			//$this->user = \Config::get('simpleauth.guest_login', true) ? self::$guest_login : false;
 			\Session::delete('username');
 			\Session::delete('login_hash');
-			return false;
+			return $this->user;
 		}
 
 		// register so Auth::logout() can find us
@@ -168,7 +169,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		\Session::set('username', $this->user['username']);
 		\Session::set('login_hash', $this->create_login_hash());
 		\Session::instance()->rotate();
-		return true;
+		return $this->user;
 	}
 
 	/**
@@ -283,10 +284,14 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 		$result = \DB::insert(\Config::get('simpleauth.table_name'))
 			->set($user)
 			->execute(\Config::get('simpleauth.db_connection'));
-		$res['code'] = ERROR_INSERT_USER;
-		$res['message'] = MSG_INSERT_USER;
+		if ($result[1] > 0)
+			$res['code'] = STATUS_OK;
+		else {
+			$res['code'] = ERROR_INSERT_USER;
+			$res['message'] = MSG_INSERT_USER;
+		}
 
-		return ($result[1] > 0) ? STATUS_OK : $res;
+		return $res;
 	}
 
 	/**
