@@ -1,7 +1,6 @@
 <?php
-class MyController extends Controller_Rest {
+class Controller_Base extends Controller_Rest {
     protected $format = 'json';
-
     /**
      *
      * get response code

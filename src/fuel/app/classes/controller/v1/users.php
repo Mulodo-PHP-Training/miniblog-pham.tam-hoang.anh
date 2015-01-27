@@ -4,7 +4,7 @@
  * @version 1
  */
 
-class Controller_V1_Users extends MyController {
+class Controller_V1_Users extends Controller_Base {
 
     private $_filter = array('strip_tags', 'htmlentities');
 
