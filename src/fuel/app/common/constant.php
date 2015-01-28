@@ -12,6 +12,10 @@ define('MSG_VALIDATE', 'Validate data error');
 define('ERROR_TOKEN_EXPIRED', '1002');
 define('MSG_TOKEN_EXPIRED', 'Token has expired');
 
+// TOKEN INVALID
+define('ERROR_TOKEN_INVALID', '1003');
+define('MSG_TOKEN_INVALID', 'Token is invalid');
+
 // USERNAME OR PASSWORD NULL
 define('ERROR_USERNAME_PWD_NULL', '1004');
 define('MSG_USERNAME_PWD_NULL', 'Username or Password null');
@@ -19,6 +23,10 @@ define('MSG_USERNAME_PWD_NULL', 'Username or Password null');
 // LOGIN FAIL
 define('ERROR_LOGIN_FAILED', '1005');
 define('MSG_LOGIN_FAILED', 'Username or Password incorrect');
+
+// LOGOUT FAIL
+define('ERROR_LOGOUT_FAILED', '1006');
+define('MSG_LOGOUT_FAILED', 'Logout unsuccessful!');
 
 // USERNAME ALREADY EXIST
 define('ERROR_USERNAME_EXIST', '2001');
@@ -34,7 +42,7 @@ define('MSG_INSERT_USER', 'Create new user failed');
 
 // USER HAS LOGGED
 define('ERROR_LOGGED_USER', '2004');
-define('MSG_LOGGED_USER', 'User has logged!');
+define('MSG_LOGGED_USER', 'User has logged in!');
 
 
 // GET ALL POST ERROR

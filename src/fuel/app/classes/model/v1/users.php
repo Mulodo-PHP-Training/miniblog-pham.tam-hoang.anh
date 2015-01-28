@@ -74,4 +74,16 @@ class Model_V1_Users extends Orm\Model {
     );
 
     protected static $_table_name = 'user';
+
+    protected static $_created_at = 'created_at';
+    protected static $_updated_at = 'updated_at';
+
+    public function check_token($token) {
+    	$model = new Model_V1_Users();
+        $res = $model->query()->where('login_hash', $token)->count();
+        if($res > 0)
+            return true;
+        return false;
+
+    }
 }

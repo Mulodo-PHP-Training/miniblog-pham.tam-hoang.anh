@@ -209,13 +209,20 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver
 	/**
 	 * Logout user
 	 *
-	 * @return  bool
+	 * @return bool
 	 */
 	public function logout()
 	{
-		$this->user = \Config::get('simpleauth.guest_login', true) ? static::$guest_login : false;
+		$this->user = \Config::get('simpleauth.guest_login', true) ? self::$guest_login : false;
+		// Update login_hash
+		\DB::update(\Config::get('simpleauth.table_name'))
+			->set(array('login_hash' => ''))
+			->where('username', '=', \Session::get('username'))
+			->execute(\Config::get('simpleauth.db_connection'));
+		// Delete session
 		\Session::delete('username');
 		\Session::delete('login_hash');
+
 		return true;
 	}
 
