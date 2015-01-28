@@ -91,8 +91,14 @@ class Controller_V1_Users extends Controller_Base {
         return $response;
     }
 
+    /**
+     *
+     * User logout
+     * param HTTP_METHOD PUT
+     * @return json format
+     */
     public function put_logout() {
-    	$model = new Model_V1_Users();
+        $model = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
         if ($model->check_token($token) and $token != '') {
             //Delete session login_hash and update token = ''

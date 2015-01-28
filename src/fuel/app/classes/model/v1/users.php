@@ -78,6 +78,12 @@ class Model_V1_Users extends Orm\Model {
     protected static $_created_at = 'created_at';
     protected static $_updated_at = 'updated_at';
 
+    /**
+     *
+     * check token
+     * @param $token
+     * @return bool
+     */
     public function check_token($token) {
     	$model = new Model_V1_Users();
         $res = $model->query()->where('login_hash', $token)->count();
