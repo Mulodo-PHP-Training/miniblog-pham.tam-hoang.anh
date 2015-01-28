@@ -109,4 +109,14 @@ class Controller_V1_Users extends Controller_Base {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
+    /**
+     *
+     * Update user info
+     * param get from HTTP METHOD PUT
+     * @return json format
+     */
+    public function put_update() {
+
+    }
+
 }
