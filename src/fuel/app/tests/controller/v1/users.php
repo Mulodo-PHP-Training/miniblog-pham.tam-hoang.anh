@@ -332,6 +332,7 @@ class Test_Controller_V1_Users extends TestCase {
      *
      * test login ok
      * method POST
+     * @return string object test logout
      */
     public function test_login_ok() {
         $link   = $this->_link.'users/signin';
@@ -343,6 +344,8 @@ class Test_Controller_V1_Users extends TestCase {
 
         $res    = $this->curl($link, $method, $params);
         $this->assertEquals(STATUS_OK, $res->meta->code);
+
+        return $res->data;
     }
 
     /**
@@ -429,6 +432,53 @@ class Test_Controller_V1_Users extends TestCase {
                     'username'  => 'phamtam',
                     'password'  => '123456'
                 )
+            ),
+        );
+    }
+
+    /**
+     *
+     * User logout
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_logout_ok($data) {
+        $link   = $this->_link.'users/logout';
+        $method = 'PUT';
+        $params = array('token' => $data->login_hash);
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertNotEmpty($data);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * Test logout invalid
+     * @param $params get from logout_invalid_provider
+     * @dataProvider logout_invalid_provider
+     */
+    public function test_logout_invalid($params) {
+        $link   = $this->_link.'users/logout';
+        $method = 'PUT';
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     *  dataProvider using test_logout_invalid
+     */
+    public function logout_invalid_provider() {
+        return array(
+            // token is null
+            array(
+                array('token' => '')
+            ),
+            // token is invalid
+            array(
+                array('token' => 'asf0130181hkjasdjf87jhh1238712jh318asdflkj1283')
             ),
         );
     }
