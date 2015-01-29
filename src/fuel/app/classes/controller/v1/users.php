@@ -53,7 +53,7 @@ class Controller_V1_Users extends Controller_Base {
             //get validation message
             $message = array();
             foreach ($val->error() as $field => $error) {
-                array_push($message, array($field => $val->error($field)->get_message()));
+                array_push($message, array($field => $error->get_message()));
             }
             $response = $this->get_response(ERROR_VALIDATE, '', $message);
         }
@@ -98,6 +98,10 @@ class Controller_V1_Users extends Controller_Base {
      * @return json format
      */
     public function put_logout() {
+        // Check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+
         $model = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
         if ($model->check_token($token) and $token != '') {
@@ -112,11 +116,54 @@ class Controller_V1_Users extends Controller_Base {
     /**
      *
      * Update user info
-     * param get from HTTP METHOD PUT
+     *
+     * params get from HTTP METHOD PUT
      * @return json format
      */
     public function put_update() {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
 
+        // Init
+        $model = new Model_V1_Users();
+        $token = Security::clean(Input::put('token'));
+        if ($model->check_token($token) and $token != '') {
+            // add validation
+            $val = Validation::forge()->add_model('Model_V1_Users');
+            if ($val->run(Input::param())) {
+                $data = array(
+                    'email' => Security::clean(Input::param('email'), $this->_filter),
+                    'profile_fields' => array(
+                        'firstname' => Security::clean(Input::param('firstname'), $this->_filter),
+                        'lastname'  => Security::clean(Input::param('lastname'), $this->_filter),
+                        'avatar'    => Security::clean(Input::param('avatar'), $this->_filter),
+                        'birthday'  => Security::clean(Input::param('birthday'), $this->_filter),
+                        'gender'    => Security::clean(Input::param('gender'), $this->_filter),
+                        'address'   => Security::clean(Input::param('address'), $this->_filter),
+                        'city'      => Security::clean(Input::param('city'), $this->_filter),
+                        'mobile'    => Security::clean(Input::param('mobile'), $this->_filter)
+                    )
+                );
+                // Update user
+                $res = Auth::update_user($data, Session::get('username'));
+                if ($res['code'] != STATUS_OK)
+                    return $this->get_response($res['code'], '', $res['message']);
+                else
+                    return $this->get_response(STATUS_OK, $res['data'], 'Update user successful!');
+
+            }
+	        else {
+	            //get validation message
+	            $message = array();
+	            foreach ($val->error() as $field => $error) {
+	                array_push($message, array($field => $error->get_message()));
+	            }
+	            $response = $this->get_response(ERROR_VALIDATE, '', $message);
+	        }
+        }
+        else
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
 }

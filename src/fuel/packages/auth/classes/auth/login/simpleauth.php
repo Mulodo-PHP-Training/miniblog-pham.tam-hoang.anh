@@ -293,22 +293,30 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
             ->execute(\Config::get('simpleauth.db_connection'));
 
         if (empty($current_values)) {
-            throw new \SimpleUserUpdateException('Username not found', 4);
+            $res['code'] = ERROR_USERNAME_NOT_FOUND;
+            $res['message'] = MSG_USERNAME_NOT_FOUND;
+            return $res;
         }
 
         $update = array();
         if (array_key_exists('username', $values)) {
-            throw new \SimpleUserUpdateException('Username cannot be changed.', 5);
+            $res['code'] = ERROR_USERNAME_CHANGE;
+            $res['message'] = MSG_USERNAME_CHANGE;
+            return $res;
         }
         if (array_key_exists('password', $values)) {
             if (empty($values['old_password'])
                 or $current_values->get('password') != $this->hash_password(trim($values['old_password']))) {
-                throw new \SimpleUserWrongPassword('Old password is invalid');
+                $res['code'] = ERROR_OLD_PWD_INVALID;
+                $res['message'] = MSG_OLD_PWD_INVALID;
+                return $res;
             }
 
             $password = trim(strval($values['password']));
             if ($password === '') {
-                throw new \SimpleUserUpdateException('Password can\'t be empty.', 6);
+                $res['code'] = ERROR_PASSWORD_NULL;
+                $res['message'] = MSG_PASSWORD_NULL;
+                return $res;
             }
             $update['password'] = $this->hash_password($password);
             unset($values['password']);
@@ -319,7 +327,9 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
         if (array_key_exists('email', $values)) {
             $email = filter_var(trim($values['email']), FILTER_VALIDATE_EMAIL);
             if ( ! $email) {
-                throw new \SimpleUserUpdateException('Email address is not valid', 7);
+                $res['code'] = ERROR_EMAIL_INVALID;
+                $res['message'] = MSG_EMAIL_INVALID;
+                return $res;
             }
             $matches = \DB::select()
                 ->where('email', '=', $email)
@@ -327,7 +337,9 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
                 ->from(\Config::get('simpleauth.table_name'))
                 ->execute(\Config::get('simpleauth.db_connection'));
             if (count($matches)) {
-                throw new \SimpleUserUpdateException('Email address is already in use', 11);
+                $res['code'] = ERROR_EMAIL_EXIST;
+                $res['message'] = MSG_EMAIL_EXIST;
+                return $res;
             }
             $update['email'] = $email;
             unset($values['email']);
@@ -338,20 +350,15 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
             }
             unset($values['group']);
         }
-        if ( ! empty($values)) {
-            $profile_fields = @unserialize($current_values->get('profile_fields')) ?: array();
-            foreach ($values as $key => $val) {
-                if ($val === null) {
-                    unset($profile_fields[$key]);
-                }
-                else {
-                    $profile_fields[$key] = $val;
+        if ( ! empty($values['profile_fields'])) {
+            foreach ($values['profile_fields'] as $key => $val) {
+                if ($val !== null) {
+                    $update[$key] = $val;
                 }
             }
-            $update['profile_fields'] = serialize($profile_fields);
         }
 
-        $update['updated_at'] = \Date::forge()->get_timestamp();
+        $update['updated_at'] = date('Y-m-d H:i:s',time());
 
         $affected_rows = \DB::update(\Config::get('simpleauth.table_name'))
             ->set($update)
@@ -366,7 +373,15 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
                 ->execute(\Config::get('simpleauth.db_connection'))->current();
         }
 
-        return $affected_rows > 0;
+        if ($affected_rows > 0) {
+            $res['code'] = STATUS_OK;
+            $res['data'] = $this->user;
+        }
+        else {
+            $res['code']    = ERROR_UPDATE_USER_FAILED;
+            $res['message'] = MSG_UPDATE_USER_FAILED;
+        }
+        return $res;
     }
 
     /**

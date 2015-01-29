@@ -44,6 +44,33 @@ define('MSG_INSERT_USER', 'Create new user failed');
 define('ERROR_LOGGED_USER', '2004');
 define('MSG_LOGGED_USER', 'User has logged in!');
 
+// UPDATE USER FAILED
+define('ERROR_UPDATE_USER_FAILED', '2005');
+define('MSG_UPDATE_USER_FAILED', 'Update user unsuccessful');
+
+// PASSWORD NULL
+define('ERROR_PASSWORD_NULL', '2006');
+define('MSG_PASSWORD_NULL', 'Password can\'t be empty');
+
+// USERNAME NOT FOUND
+define('ERROR_USERNAME_NOT_FOUND', '2007');
+define('MSG_USERNAME_NOT_FOUND', 'Username not found');
+
+// USERNAME CANNOT BE CHANGE
+define('ERROR_USERNAME_CHANGE', '2008');
+define('MSG_USERNAME_CHANGE', 'Username can\'t be change');
+
+// OLD PASSWORD IS INVALID
+define('ERROR_OLD_PWD_INVALID', '2009');
+define('MSG_OLD_PWD_INVALID', 'Old password is invalid');
+
+// EMAIL IS INVALID
+define('ERROR_EMAIL_INVALID', '2010');
+define('MSG_EMAIL_INVALID', 'Email is invalid');
+
+// USER NOT LOGIN
+define('ERROR_USER_NOT_LOGIN', '2011');
+define('MSG_USER_NOT_LOGIN', 'You are not login!');
 
 // GET ALL POST ERROR
 define('ERROR_GET_ALL_POST_FAILED', '2501');
