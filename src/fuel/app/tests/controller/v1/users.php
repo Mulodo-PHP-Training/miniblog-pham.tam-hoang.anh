@@ -1,4 +1,7 @@
 <?php
+use Fuel\Core\Input;
+use Fuel\Core\Request;
+use Fuel\Core\DB;
 /**
  *
  * Testing Controller_V1_Users
@@ -7,6 +10,16 @@
  */
 class Test_Controller_V1_Users extends TestCase {
     private $_link = 'http://miniblog.tam/v1/';
+
+    protected function setUp() {
+
+    }
+
+    protected function tearDown()
+    {
+
+    }
+
     /**
      *
      * test create user
@@ -344,7 +357,6 @@ class Test_Controller_V1_Users extends TestCase {
 
         $res    = $this->curl($link, $method, $params);
         $this->assertEquals(STATUS_OK, $res->meta->code);
-
         return $res->data;
     }
 
@@ -438,22 +450,6 @@ class Test_Controller_V1_Users extends TestCase {
 
     /**
      *
-     * User logout
-     * @param object $data get from test_login_ok
-     * @depends test_login_ok
-     */
-    public function test_logout_ok($data) {
-        $link   = $this->_link.'users/logout';
-        $method = 'PUT';
-        $params = array('token' => $data->login_hash);
-
-        $res    = $this->curl($link, $method, $params);
-        $this->assertNotEmpty($data);
-        $this->assertEquals(STATUS_OK, $res->meta->code);
-    }
-
-    /**
-     *
      * Test logout invalid
      * @param $params get from logout_invalid_provider
      * @dataProvider logout_invalid_provider
@@ -484,6 +480,99 @@ class Test_Controller_V1_Users extends TestCase {
     }
 
     /**
+     * Test update user info successful
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_update_user_failed($data) {
+        $link   = $this->_link.'users';
+        $method = 'PUT';
+        $params = array(
+            'email'     => 'tam4@gmail.com',
+            'firstname' => 'Tam_',
+            'lastname'  => 'Pham_',
+            'avatar'    => 'avatar_.jpg',
+            'birthday'  => '2015-01-29',
+            'gender'    => 1,
+            'address'   => '111D_',
+            'city'      => 'HCM_',
+            'mobile'    => '099999999999',
+            'token'     => $data->login_hash,
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_UPDATE_USER_FAILED, $res->meta->code);
+    }
+
+    /**
+     *
+     * test update email exist
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_update_user_email_exist($data) {
+        $link   = $this->_link.'users';
+        $method = 'PUT';
+        $params = array(
+            'email'             => 'tam@gmail.com',
+            'firstname' => 'Tam_',
+            'lastname'  => 'Pham_',
+            'avatar'    => 'avatar_.jpg',
+            'birthday'  => '2015-01-29',
+            'gender'    => 1,
+            'address'   => '111D_',
+            'city'      => 'HCM_',
+            'mobile'    => '099999999999',
+            'token'     => $data->login_hash,
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_EMAIL_EXIST, $res->meta->code);
+    }
+
+/**
+     *
+     * test update email invalid
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_update_user_email_invalid($data) {
+        $link   = $this->_link.'users';
+        $method = 'PUT';
+        $params = array(
+            'email'             => 'tam.gmail.com',
+            'firstname' => 'Tam_',
+            'lastname'  => 'Pham_',
+            'avatar'    => 'avatar_.jpg',
+            'birthday'  => '2015-01-29',
+            'gender'    => 1,
+            'address'   => '111D_',
+            'city'      => 'HCM_',
+            'mobile'    => '099999999999',
+            'token'     => $data->login_hash,
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_EMAIL_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     * User logout
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_logout_ok($data) {
+        $link   = $this->_link.'users/logout';
+        $method = 'PUT';
+        $params = array('token' => $data->login_hash);
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertNotEmpty($data);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
      *
      * get response body from $link
      * @param string $link
@@ -492,15 +581,23 @@ class Test_Controller_V1_Users extends TestCase {
      *
      * @return object
      */
-    private function curl($link, $method = 'GET', $params = '') {
+    private function curl($link, $method = 'GET', $params = '', $header = '') {
         // init
         $curl = Request::forge($link, 'curl');
+
+        // set header
+        if ($header) {
+            foreach ($header as $key => $val) {
+                $curl->set_header($key, $val);
+            }
+        }
 
         // set method
         $curl->set_method($method);
 
         // set params
-        $curl->set_params($params);
+        if ($params)
+            $curl->set_params($params);
 
         // execute the request
         $curl->execute();
