@@ -88,10 +88,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
             if ($this->user and (\Config::get('simpleauth.multiple_logins', false) or $this->user['login_hash'] === $login_hash)) {
                 return true;
             }
-        }
-
-        // not logged in, do we have remember-me active and a stored user_id?
-        elseif (static::$remember_me and $user_id = static::$remember_me->get('user_id', null)) {
+        } elseif (static::$remember_me and $user_id = static::$remember_me->get('user_id', null)) { // not logged in, do we have remember-me active and a stored user_id?
             return $this->force_login($user_id);
         }
 
@@ -238,8 +235,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
                 $res['code'] = ERROR_EMAIL_EXIST;
                 $res['message'] = MSG_EMAIL_EXIST;
                 return $res;
-            }
-            else {
+            } else {
                 $res['code'] = ERROR_USERNAME_EXIST;
                 $res['message'] = MSG_USERNAME_EXIST;
                 return $res;
@@ -267,9 +263,9 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
         $result = \DB::insert(\Config::get('simpleauth.table_name'))
             ->set($user)
             ->execute(\Config::get('simpleauth.db_connection'));
-        if ($result[1] > 0)
+        if ($result[1] > 0) {
             $res['code'] = STATUS_OK;
-        else {
+        } else {
             $res['code'] = ERROR_INSERT_USER;
             $res['message'] = MSG_INSERT_USER;
         }
@@ -282,13 +278,13 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
      * Note: Username cannot be updated, to update password the old password must be passed as old_password
      *
      * @param   Array  properties to be updated including profile fields
-     * @param   string
+     * @param   int
      * @return  bool
      */
-    public function update_user($values, $username = null) {
-        $username = $username ?: $this->user['username'];
+    public function update_user($values, $id = null) {
+        $id = $id ?: $this->user['id'];
         $current_values = \DB::select_array(\Config::get('simpleauth.table_columns', array('*')))
-            ->where('username', '=', $username)
+            ->where('id', '=', $id)
             ->from(\Config::get('simpleauth.table_name'))
             ->execute(\Config::get('simpleauth.db_connection'));
 
@@ -362,13 +358,13 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
 
         $affected_rows = \DB::update(\Config::get('simpleauth.table_name'))
             ->set($update)
-            ->where('username', '=', $username)
+            ->where('id', '=', $id)
             ->execute(\Config::get('simpleauth.db_connection'));
 
         // Refresh user
-        if ($this->user['username'] == $username) {
+        if ($this->user['id'] == $id) {
             $this->user = \DB::select_array(\Config::get('simpleauth.table_columns', array('*')))
-                ->where('username', '=', $username)
+                ->where('id', '=', $id)
                 ->from(\Config::get('simpleauth.table_name'))
                 ->execute(\Config::get('simpleauth.db_connection'))->current();
         }
@@ -376,8 +372,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
         if ($affected_rows > 0) {
             $res['code'] = STATUS_OK;
             $res['data'] = $this->user;
-        }
-        else {
+        } else {
             $res['code']    = ERROR_UPDATE_USER_FAILED;
             $res['message'] = MSG_UPDATE_USER_FAILED;
         }
@@ -503,8 +498,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
     public function get($field, $default = null) {
         if (isset($this->user[$field])) {
             return $this->user[$field];
-        }
-        elseif (isset($this->user['profile_fields'])) {
+        } elseif (isset($this->user['profile_fields'])) {
             return $this->get_profile_fields($field, $default);
         }
 
@@ -545,8 +539,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
 
         if (isset($this->user['profile_fields'])) {
             is_array($this->user['profile_fields']) or $this->user['profile_fields'] = (@unserialize($this->user['profile_fields']) ?: array());
-        }
-        else {
+        } else {
             $this->user['profile_fields'] = array();
         }
 

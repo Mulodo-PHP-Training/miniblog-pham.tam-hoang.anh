@@ -42,14 +42,12 @@ class Controller_V1_Users extends Controller_Base {
 
             if ($rest['code'] !== STATUS_OK) {
                 $response = $this->get_response($rest['code'], '', $rest['message']);
-            }
-            else {
+            } else {
                 $data = Input::param();
                 $message = 'User account was created successfully';
                 $response = $this->get_response(STATUS_OK, $data, $message);
             }
-        }
-        else {
+        } else {
             //get validation message
             $message = array();
             foreach ($val->error() as $field => $error) {
@@ -108,8 +106,7 @@ class Controller_V1_Users extends Controller_Base {
             //Delete session login_hash and update token = ''
             Auth::logout();
             return $this->get_response(STATUS_OK, '', 'Logout successful!');
-        }
-        else
+        } else
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
@@ -142,14 +139,14 @@ class Controller_V1_Users extends Controller_Base {
                     'mobile'    => Security::clean(Input::param('mobile'), $this->_filter)
                 )
             );
+            $user_id = Auth::get_user_id();
             // Update user
-            $res = Auth::update_user($data, Session::get('username'));
-            if ($res['code'] != STATUS_OK)
+            $res = Auth::update_user($data, $user_id[1]);
+            if ($res['code'] != STATUS_OK) {
                 return $this->get_response($res['code'], '', $res['message']);
-            else
+            } else
                 return $this->get_response(STATUS_OK, $res['data'], 'Update user successful!');
-        }
-        else
+        } else
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 

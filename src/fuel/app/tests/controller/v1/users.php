@@ -11,15 +11,6 @@ use Fuel\Core\DB;
 class Test_Controller_V1_Users extends TestCase {
     private $_link = 'http://miniblog.tam/v1/';
 
-    protected function setUp() {
-
-    }
-
-    protected function tearDown()
-    {
-
-    }
-
     /**
      *
      * test create user
@@ -563,6 +554,7 @@ class Test_Controller_V1_Users extends TestCase {
      * @depends test_login_ok
      */
     public function test_logout_ok($data) {
+        Auth::login($data->username, $data->password);
         $link   = $this->_link.'users/logout';
         $method = 'PUT';
         $params = array('token' => $data->login_hash);
