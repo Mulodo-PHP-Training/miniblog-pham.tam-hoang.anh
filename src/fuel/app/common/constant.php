@@ -72,6 +72,14 @@ define('MSG_EMAIL_INVALID', 'Email is invalid');
 define('ERROR_USER_NOT_LOGIN', '2011');
 define('MSG_USER_NOT_LOGIN', 'You are not login!');
 
+// CHANGE PASSWORD FAILED
+define('ERROR_CHANGE_PWD_FAILED', '2012');
+define('MSG_CHANGE_PWD_FAILED', 'Change password failed!');
+
+// RE_PASSWORD NOT MATCH
+define('ERROR_PWD_NOT_MATCH', '2013');
+define('MSG_PWD_NOT_MATCH', 'Retype password not match!');
+
 // GET ALL POST ERROR
 define('ERROR_GET_ALL_POST_FAILED', '2501');
 define('MSG_GET_ALL_POST_FAILED', 'Get all post error');

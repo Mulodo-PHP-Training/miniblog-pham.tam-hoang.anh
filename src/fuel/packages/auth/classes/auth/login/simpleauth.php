@@ -384,16 +384,19 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
      *
      * @param   string
      * @param   string
-     * @param   string  username or null for current user
-     * @return  bool
+     * @param   string  id or null for current user
+     * @return  json format
      */
-    public function change_password($old_password, $new_password, $username = null) {
+    public function change_password($old_password, $new_password, $id = null) {
         try {
-            return (bool) $this->update_user(array('old_password' => $old_password, 'password' => $new_password), $username);
+            $res = $this->update_user(array('old_password' => $old_password, 'password' => $new_password), $id);
+            return $res;
         }
         // Only catch the wrong password exception
         catch (SimpleUserWrongPassword $e) {
-            return false;
+            $res['code']    = ERROR_CHANGE_PWD_FAILED;
+            $res['message'] = MSG_CHANGE_PWD_FAILED;
+            return $res;
         }
     }
 
