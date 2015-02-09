@@ -150,4 +150,33 @@ class Controller_V1_Users extends Controller_Base {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
+    public function put_password() {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+
+        // Init
+        $model = new Model_V1_Users();
+        $token = Security::clean(Input::put('token'));
+        //check token
+        if ($model->check_token($token) and $token != '') {
+            $old_password   = Security::clean(Input::param('old_password'), $this->_filter);
+            $new_password   = Security::clean(Input::param('new_password'), $this->_filter);
+            $re_password    = Security::clean(Input::param('re_password'), $this->_filter);
+            // check re_password match with new_password
+            if ($new_password !== $re_password) {
+                return $this->get_response(ERROR_PWD_NOT_MATCH, '', MSG_PWD_NOT_MATCH);
+            }
+
+            $user_id = Auth::get_user_id();
+            // Change password
+            $res = Auth::change_password($old_password, $new_password, $user_id[1]);
+            if ($res['code'] != STATUS_OK) {
+                return $this->get_response($res['code'], '', $res['message']);
+            } else
+                return $this->get_response(STATUS_OK, $res['data'], 'Change password successful!');
+        } else
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+    }
+
 }
