@@ -549,6 +549,78 @@ class Test_Controller_V1_Users extends TestCase {
 
     /**
      *
+     * Change password ok
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_change_password_ok($data) {
+        $link   = $this->_link.'users/password';
+        $method = 'PUT';
+        echo $data->password;
+        $params = array(
+            'old_password'      => $data->password,
+            'new_password'      => '123456',
+            'retype_password'   => '123456',
+            'token'             => $data->login_hash
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * Change password error validate
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_change_password_validate_error($data) {
+        $link   = $this->_link.'users/password';
+        $method = 'PUT';
+        $params = array(
+            'new_password'   => '12',
+            'token'             => $data->login_hash
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_VALIDATE, $res->meta->code);
+    }
+
+    /**
+     *
+     * retype password not match
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_re_password_not_match($data) {
+        $link   = $this->_link.'users/password';
+        $method = 'PUT';
+        $params = array(
+            'old_password'      => $data->password,
+            'new_password'      => '123456',
+            'retype_password'   => '123',
+            'token'             => $data->login_hash
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_PWD_NOT_MATCH, $res->meta->code);
+    }
+
+    /**
+     *
+     * check token
+     */
+    public function change_password_token_invalid() {
+        $link   = $this->_link.'usres/password';
+        $method = 'PUT';
+        $params = array('token' => 'akdsf98u9823lkjaljsd9132lkjasdf');
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
      * User logout
      * @param object $data get from test_login_ok
      * @depends test_login_ok

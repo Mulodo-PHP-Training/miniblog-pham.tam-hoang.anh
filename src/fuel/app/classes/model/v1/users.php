@@ -85,7 +85,7 @@ class Model_V1_Users extends Orm\Model {
      * @return bool
      */
     public function check_token($token) {
-    	$model = new Model_V1_Users();
+        $model = new Model_V1_Users();
         $res = $model->query()->where('login_hash', $token)->count();
         if($res > 0)
             return true;
