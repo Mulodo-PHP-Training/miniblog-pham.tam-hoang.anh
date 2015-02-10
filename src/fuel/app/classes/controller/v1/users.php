@@ -223,4 +223,14 @@ class Controller_V1_Users extends Controller_Base {
                 return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
+    /**
+     *
+     * Search user by username, firstname, lastname
+     * @param string $keyword get from method GET
+     * return json format
+     */
+    public function get_search() {
+
+    }
+
 }
