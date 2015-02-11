@@ -1,7 +1,4 @@
 <?php
-use Fuel\Core\Input;
-use Fuel\Core\Request;
-use Fuel\Core\DB;
 /**
  *
  * Testing Controller_V1_Users
@@ -556,7 +553,6 @@ class Test_Controller_V1_Users extends TestCase {
     public function test_change_password_ok($data) {
         $link   = $this->_link.'users/password';
         $method = 'PUT';
-        echo $data->password;
         $params = array(
             'old_password'      => $data->password,
             'new_password'      => '123456',
@@ -610,13 +606,65 @@ class Test_Controller_V1_Users extends TestCase {
      *
      * check token
      */
-    public function change_password_token_invalid() {
-        $link   = $this->_link.'usres/password';
+    public function test_change_password_token_invalid() {
+        $link   = $this->_link.'users/password';
         $method = 'PUT';
         $params = array('token' => 'akdsf98u9823lkjaljsd9132lkjasdf');
 
         $res = $this->curl($link, $method, $params);
         $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     * Search user ok
+     * param get from method GET
+     */
+    public function test_search_user_ok() {
+        $link   = $this->_link.'users/search';
+        $method = 'GET';
+        $params = array('keyword' => 'tam');
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * Keyword null
+     * @param array $params get from provider keyword_null_provider
+     * @dataProvider keyword_null_provider
+     */
+    public function test_search_user_keyword_null($params) {
+        $link   = $this->_link.'users/search';
+        $method = 'GET';
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_KEYWORD_NULL, $res->meta->code);
+    }
+
+    /**
+     *
+     * Keyword provider
+     */
+    public function keyword_null_provider() {
+        return array(
+            array(
+                array('keyword' => '')
+            ),
+            array(
+                array('offset' => 0)
+            )
+        );
+    }
+
+    public function test_search_user_not_found_result() {
+        $link   = $this->_link.'users/search';
+        $method = 'GET';
+        $params = array('keyword' => 'aaaaa bbbb');
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_SEARCH_USER_NOT_FOUND_RESULT, $res->meta->code);
     }
 
     /**
