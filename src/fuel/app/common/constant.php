@@ -80,6 +80,17 @@ define('MSG_CHANGE_PWD_FAILED', 'Change password failed!');
 define('ERROR_PWD_NOT_MATCH', '2013');
 define('MSG_PWD_NOT_MATCH', 'Retype password not match!');
 
+// KEYWORD NOT NULL
+define('ERROR_KEYWORD_NULL', '2014');
+define('MSG_KEYWORD_NULL', 'Keyword can not null!');
+
+// SEARCH USER FAILED
+define('ERROR_SEARCH_USER_FAILED', '2015');
+define('MSG_SEARCH_USER_FAILED', 'Search user failed!');
+
+// SEARCH USER NOT FOUND RESULT
+define('ERROR_SEARCH_USER_NOT_FOUND_RESULT', '2016');
+
 // GET ALL POST ERROR
 define('ERROR_GET_ALL_POST_FAILED', '2501');
 define('MSG_GET_ALL_POST_FAILED', 'Get all post error');
@@ -119,3 +130,6 @@ define('MSG_UPDATE_COMMENT_FAILED', 'Update comment error');
 // DELETE COMMENT ERROR
 define('ERROR_DELETE_COMMENT_FAILED', '3004');
 define('MSG_DELETE_COMMENT_FAILED', 'Delete comment error');
+
+// LIMIT_USER
+define('LIMIT_USER', 15);

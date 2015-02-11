@@ -92,4 +92,35 @@ class Model_V1_Users extends Orm\Model {
         return false;
 
     }
+
+    /**
+     *
+     * Search user by username, firstname, lastname
+     * @param string $keyword
+     * @param int $limit
+     * @param int $offset
+     */
+    public function search_user($keyword, $limit = LIMIT_USER, $offset = 0) {
+        // SQL
+        $sql = sprintf("SELECT * FROM user WHERE MATCH(username, firstname, lastname) AGAINST('%s') order by created_at desc limit %d offset %d", $keyword, $limit, $offset);
+        $user = DB::query($sql)->as_object()->execute();
+        //check isset user
+        if($user) {
+            // list user
+            $item = array();
+            foreach ($user as $value) {
+                $item[] = $value;
+            }
+            //response
+            $data = array(
+                'item'      => $item,
+                'limit'     => $limit,
+                'offset'    => $offset,
+                'total'     => count($user)
+            );
+            return $data;
+        }
+
+        return false;
+    }
 }

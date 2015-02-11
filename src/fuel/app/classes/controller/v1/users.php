@@ -230,7 +230,26 @@ class Controller_V1_Users extends Controller_Base {
      * return json format
      */
     public function get_search() {
+        $keyword = Security::clean(Input::get('keyword'), $this->_filter);
+        if(!$keyword)
+            return $this->get_response(ERROR_KEYWORD_NULL, '', MSG_KEYWORD_NULL);
+        // if limit not exist and not nummeric: return default: LIMIT_USER
+        $limit = (Input::get('limit') and is_numeric(Input::get('limit'))) ? Security::clean(Input::get('limit'), $this->_filter) : LIMIT_USER;
+        // if offset not exist and not nummeric: return default: 0
+        $offset = (Input::get('offset') and is_numeric(Input::get('offset'))) ? Security::clean(Input::get('offset'), $this->_filter) : 0;
 
+        // init model
+        $model = new Model_V1_Users();
+        // search_user
+        $res = $model->search_user($keyword, $limit, $offset);
+        // check search
+        if($res == false)
+            return $this->get_response(ERROR_SEARCH_USER_FAILED, '', MSG_SEARCH_USER_FAILED);
+        //check result
+        if($res['total'] === 0)
+            return $this->get_response(ERROR_SEARCH_USER_NOT_FOUND_RESULT, '', 'Find '.$res['total'].' results with keyword '.$keyword);
+
+        return $this->get_response(STATUS_OK, $res, 'Search user success');
     }
 
 }
