@@ -252,4 +252,14 @@ class Controller_V1_Users extends Controller_Base {
         return $this->get_response(STATUS_OK, $res, 'Search user success');
     }
 
+    /**
+     *
+     * Get user information
+     * @param $user_id
+     * return json format
+     */
+    public function get_get_user_info($user_id) {
+
+    }
+
 }
