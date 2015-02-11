@@ -255,11 +255,26 @@ class Controller_V1_Users extends Controller_Base {
     /**
      *
      * Get user information
-     * @param $user_id
      * return json format
      */
-    public function get_get_user_info($user_id) {
+    public function get_user_info() {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+        // Init model
+        $model = new Model_V1_Users();
 
+        $token = Security::clean(Input::get('token'));
+         //check token
+        if ($model->check_token($token) and $token != '') {
+            $user_id = Auth::get_user_id();
+            $user = $model->get_user_info($user_id[1]);
+            // exist user
+            if($user !== false)
+                return $this->get_response(STATUS_OK, $user, 'Get information of user successfully!');
+            return $this->get_response(ERROR_GET_USER_INFO_FAILED, '', MSG_GET_USER_INFO_FAILED);
+        } else
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
 }

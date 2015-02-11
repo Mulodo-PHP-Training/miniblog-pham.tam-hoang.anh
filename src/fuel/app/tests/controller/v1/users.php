@@ -669,6 +669,22 @@ class Test_Controller_V1_Users extends TestCase {
 
     /**
      *
+     * get user info ok
+     * @param object $data get from test_login_ok
+     * @depends test_login_ok
+     *
+     */
+    public function test_get_user_info_ok($data) {
+        $link   = $this->_link.'users';
+        $method = 'GET';
+        $params = array('token' => $data->login_hash);
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
      * User logout
      * @param object $data get from test_login_ok
      * @depends test_login_ok
@@ -682,6 +698,19 @@ class Test_Controller_V1_Users extends TestCase {
         $res    = $this->curl($link, $method, $params);
         $this->assertNotEmpty($data);
         $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * check token
+     */
+    public function test_get_user_info_token_invalid() {
+        $link   = $this->_link.'users';
+        $method = 'PUT';
+        $params = array('token' => 'akdsf98u9823lkjaljsd9132lkjasdf');
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
     }
 
     /**

@@ -39,4 +39,26 @@ class Test_Model_V1_Users extends TestCase {
 
         $this->assertEquals($user['total'], 0);
     }
+
+    /**
+     *
+     * get user info ok
+     */
+    public function test_get_user_info_ok() {
+        $id     = 18;
+        $user   = $this->_model->get_user_info($id);
+
+        $this->assertNotEmpty($user);
+    }
+
+    /**
+     *
+     * Not found user
+     */
+    public function test_get_user_info_false() {
+        $id     = 0;
+        $user   = $this->_model->get_user_info($id);
+
+        $this->assertFalse($user);
+    }
 }

@@ -91,6 +91,10 @@ define('MSG_SEARCH_USER_FAILED', 'Search user failed!');
 // SEARCH USER NOT FOUND RESULT
 define('ERROR_SEARCH_USER_NOT_FOUND_RESULT', '2016');
 
+// GET USER INFO FAILED
+define('ERROR_GET_USER_INFO_FAILED', '2017');
+define('MSG_GET_USER_INFO_FAILED', 'Get user information unsuccessful!');
+
 // GET ALL POST ERROR
 define('ERROR_GET_ALL_POST_FAILED', '2501');
 define('MSG_GET_ALL_POST_FAILED', 'Get all post error');

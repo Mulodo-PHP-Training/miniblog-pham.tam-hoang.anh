@@ -123,4 +123,16 @@ class Model_V1_Users extends Orm\Model {
 
         return false;
     }
+
+    /**
+     *
+     * Get user information
+     * @param int $id user_id
+     */
+    public function get_user_info($id) {
+        $user = Model_V1_Users::find($id);
+        if($user)
+            return $user;
+        return false;
+    }
 }
