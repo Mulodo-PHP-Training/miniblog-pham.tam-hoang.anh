@@ -119,6 +119,11 @@ define('MSG_GET_A_POST_FAILED', 'get a post error');
 define('ERROR_SEARCH_POST_FAILED', '2506');
 define('MSG_SEARCH_POST_FAILED', 'Search post error');
 
+// GET LIST ALL POSTS OF USER_NULL
+define('ERROR_GET_LIST_POST_USER_NULL', '2507');
+define('MSG_GET_LIST_POST_USER_NULL', 'Can not found post with user');
+
+
 //GET ALL COMMENT ERROR
 define('ERROR_GET_ALL_COMMENT_FAILED', '3001');
 define('MSG_GET_ALL_COMMENT_FAILED', 'Get all comment error');
@@ -137,3 +142,6 @@ define('MSG_DELETE_COMMENT_FAILED', 'Delete comment error');
 
 // LIMIT_USER
 define('LIMIT_USER', 15);
+
+// LIMIT_POST
+define('LIMIT_POST', 10);

@@ -77,6 +77,13 @@ class Model_V1_Users extends Orm\Model {
 
     protected static $_created_at = 'created_at';
     protected static $_updated_at = 'updated_at';
+    protected static $_has_many = array(
+        'post' => array(
+            'model_to'  => 'Model_V1_Posts',
+            'key_form'  => 'id',
+            'key_to'    => 'user_id'
+        )
+    );
 
     /**
      *

@@ -277,13 +277,4 @@ class Controller_V1_Users extends Controller_Base {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
     }
 
-    /**
-     *
-     * get list all posts for user
-     * @param int $user_id
-     * @return json format
-     */
-    public function get_list_posts_for_user($user_id) {
-    }
-
 }
