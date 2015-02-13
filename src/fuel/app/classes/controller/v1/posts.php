@@ -8,6 +8,8 @@
  */
 class Controller_V1_Posts extends Controller_Base {
 
+    private $_filter = array('strip_tags', 'htmlentities');
+
     /**
      *
      * get list all posts for user
@@ -29,5 +31,15 @@ class Controller_V1_Posts extends Controller_Base {
         if($posts)
             return $this->get_response(STATUS_OK, $posts, 'OK');
         return $this->get_response(ERROR_GET_LIST_POST_USER_NULL, '', MSG_GET_LIST_POST_USER_NULL);
+    }
+
+    /**
+     *
+     * create post
+     * param get from method POST
+     * @return json response
+     */
+    public function post_create() {
+
     }
 }
