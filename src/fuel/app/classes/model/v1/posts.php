@@ -28,6 +28,10 @@ class Model_V1_Posts extends Orm\Model {
             'data_type'         => 'varchar',
             'label'             => 'Image'
         ),
+        'user_id'         => array(
+            'data_type'         => 'int',
+            'label'             => 'User Id'
+        ),
         'status'        => array(
             'data_type'         => 'int',
             'label'             => 'Status'

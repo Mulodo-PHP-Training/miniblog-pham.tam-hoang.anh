@@ -40,6 +40,44 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json response
      */
     public function post_create() {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
 
+        // Init
+        $model = new Model_V1_Posts();
+
+        // add validation
+        $val = Validation::forge()->add_model('Model_V1_Posts');
+        $user = new Model_V1_Users();
+        $token = Security::clean(Input::post('token'));
+        if (!$user->check_token($token) or $token == '') {
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
+
+        if ($val->run()) {
+            $user_id = Auth::get_user_id();
+            $model->title           = Security::clean(Input::post('title'), $this->_filter);
+            $model->description     = Security::clean(Input::post('description'), $this->_filter);
+            $model->content         = Security::clean(Input::post('content'), $this->_filter);
+            $model->image           = Security::clean(Input::post('image'), $this->_filter);
+            $model->user_id         = $user_id[1];
+            $model->status          = Security::clean(Input::post('status'), $this->_filter);
+            $model->created_at      = date('Y-m-d H:i:s',time());
+            $model->updated_at      = date('Y-m-d H:i:s',time());
+
+            $res = $model->save();
+            if ($res)
+                return $this->get_response(STATUS_OK, $model, 'Create post successful!');
+            else
+                return $this->get_response(ERROR_CREATE_POST_FAILED, '', MSG_CREATE_POST_FAILED);
+        } else {
+            //get validation message
+            $message = array();
+            foreach ($val->error() as $field => $error) {
+                array_push($message, array($field => $error->get_message()));
+            }
+            return $this->get_response(ERROR_VALIDATE, '', $message);
+        }
     }
 }

@@ -10,6 +10,24 @@ class Test_Controller_V1_Posts extends TestCase {
 
     /**
      *
+     * login ok
+     * method POST
+     * @return string object test logout
+     */
+    public function test_login_ok() {
+        $link   = $this->_link.'users/signin';
+        $method = 'POST';
+        $params = array(
+            'username' => 'phamtam2',
+            'password' => '123456'
+        );
+
+        $res    = $this->curl($link, $method, $params);
+        return $res->data;
+    }
+
+    /**
+     *
      * get all list post of user true
      */
     public function test_get_list_post_user_ok() {
@@ -30,6 +48,103 @@ class Test_Controller_V1_Posts extends TestCase {
 
         $res    = $this->curl($link, $method);
         $this->assertEquals(ERROR_GET_LIST_POST_USER_NULL, $res->meta->code);
+    }
+
+    /**
+     *
+     * test create post ok
+     */
+    public function test_create_post_ok() {
+        $data = $this->test_login_ok();
+        $link   = $this->_link.'posts';
+        $method = 'POST';
+        $params  = array(
+            'title'         => 'post_4',
+            'description'   => 'post 4',
+            'content'       => 'post 4',
+            'image'         => 'post_4.jpg',
+            'status'        => '1',
+            'token'         => $data->login_hash
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * test token invalid
+     */
+    public function test_create_post_invalid_token() {
+        $link   = $this->_link.'posts';
+        $method = 'POST';
+        $param  = array('token' => 'lkajsdf98as0f9sdfjslf9u0as9df');
+
+        $res    = $this->curl($link, $method, $param);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     * test validate error
+     * @dataProvider provider_create_post_validate
+     */
+    public function test_create_post_validate_error($params) {
+        $link   = $this->_link.'posts';
+        $method = 'POST';
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_VALIDATE, $res->meta->code);
+    }
+
+    /**
+     *
+     * dataProvider for test_create_post_validate_error
+     */
+    public function provider_create_post_validate() {
+        $data = $this->test_login_ok();
+        return array(
+            // title null
+            array(
+                array(
+                    'title'         => '',
+                    'description'   => 'post 4',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token'         => $data->login_hash
+                )
+            ),
+            // tile < 4 character
+            array(
+                array(
+                    'title' => 'abc',
+                    'description'   => 'post 4',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+            // description null
+            array(
+                array(
+                    'title' => 'post 4',
+                    'description'   => '',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+            // content null
+            array(
+                array(
+                    'title' => 'post 4',
+                    'description'   => 'post 4',
+                    'content'       => '',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+        );
     }
 
     /**
