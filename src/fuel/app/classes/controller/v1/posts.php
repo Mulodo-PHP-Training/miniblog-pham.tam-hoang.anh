@@ -80,4 +80,14 @@ class Controller_V1_Posts extends Controller_Base {
             return $this->get_response(ERROR_VALIDATE, '', $message);
         }
     }
+
+    /**
+     *
+     * Update post
+     * @param int $id
+     * @return json format
+     */
+    public function put_update($id) {
+
+    }
 }
