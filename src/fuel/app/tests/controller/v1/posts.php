@@ -69,6 +69,7 @@ class Test_Controller_V1_Posts extends TestCase {
 
         $res = $this->curl($link, $method, $params);
         $this->assertEquals(STATUS_OK, $res->meta->code);
+        return $res->data;
     }
 
     /**
@@ -146,6 +147,105 @@ class Test_Controller_V1_Posts extends TestCase {
             ),
         );
     }
+
+    /**
+     *
+     * Test update post ok
+     * @depends test_create_post_ok
+     */
+    public function test_update_post_ok($post) {
+        $data = $this->test_login_ok();
+        $link   = $this->_link.'posts/'.$post->id;
+        $method = 'PUT';
+        $params = array(
+            'title'         => 'post update',
+            'description'   => 'description update',
+            'content'       => 'content update',
+            'status'        => 1,
+            'token'         => $data->login_hash
+        );
+
+        $res = $this->curl($link, $method, $params);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
+    /**
+     *
+     * test update post token invalid
+     * @depends test_create_post_ok
+     */
+    public function test_update_post_invalid_token($post) {
+        $link   = $this->_link.'posts/'.$post->id;
+        $method = 'PUT';
+        $param  = array('token' => 'lkajsdf98as0f9sdfjslf9u0as9df');
+
+        $res    = $this->curl($link, $method, $param);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     * test validate error
+     * @dataProvider provider_update_post_validate
+     */
+    public function test_update_post_validate_error($params) {
+        $link   = $this->_link.'posts/1';
+        $method = 'PUT';
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_VALIDATE, $res->meta->code);
+    }
+
+    /**
+     *
+     * dataProvider for test_update_post_validate_error
+     */
+    public function provider_update_post_validate() {
+        $data = $this->test_login_ok();
+        return array(
+            // title null
+            array(
+                array(
+                    'title'         => '',
+                    'description'   => 'post 4',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token'         => $data->login_hash
+                )
+            ),
+            // tile < 4 character
+            array(
+                array(
+                    'title' => 'abc',
+                    'description'   => 'post 4',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+            // description null
+            array(
+                array(
+                    'title' => 'post 4',
+                    'description'   => '',
+                    'content'       => 'post 4',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+            // content null
+            array(
+                array(
+                    'title' => 'post 4',
+                    'description'   => 'post 4',
+                    'content'       => '',
+                    'status'        => 1,
+                    'token' => $data->login_hash
+                )
+            ),
+        );
+    }
+
 
     /**
      *

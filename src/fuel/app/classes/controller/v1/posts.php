@@ -28,7 +28,7 @@ class Controller_V1_Posts extends Controller_Base {
 
         // get list posts
         $posts   = $model->get_list_posts_for_user($user_id, $limit, $offset);
-        if($posts)
+        if ($posts)
             return $this->get_response(STATUS_OK, $posts, 'OK');
         return $this->get_response(ERROR_GET_LIST_POST_USER_NULL, '', MSG_GET_LIST_POST_USER_NULL);
     }
@@ -41,7 +41,7 @@ class Controller_V1_Posts extends Controller_Base {
      */
     public function post_create() {
         // check login
-        if(!Auth::check())
+        if (!Auth::check())
             return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
 
         // Init
@@ -88,6 +88,57 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json format
      */
     public function put_update($id) {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
 
+        // check token
+        $user = new Model_V1_Users();
+        $token = Security::clean(Input::put('token'));
+        if (!$user->check_token($token) or $token == '') {
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
+
+        // Init model
+        $model = Model_V1_Posts::find($id);
+        //get user id
+        $user_id = Auth::get_user_id();
+        // check permission
+        if ($model->user_id != $user_id[1])
+            return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
+
+         // add validation
+        $val = Validation::forge()->add_model('Model_V1_Posts');
+
+        // validate attribute
+        $input = array(
+            'title'         => Security::clean(Input::put('title'), $this->_filter),
+            'description'   => Security::clean(Input::put('description'), $this->_filter),
+            'content'       => Security::clean(Input::put('content'), $this->_filter),
+            'image'         => Security::clean(Input::put('image'), $this->_filter),
+            'status'        => Security::clean(Input::put('status'), $this->_filter)
+        );
+
+        if ($val->run($input, true)) {
+            $model->title           = Security::clean(Input::put('title'), $this->_filter);
+            $model->description     = Security::clean(Input::put('description'), $this->_filter);
+            $model->content         = Security::clean(Input::put('content'), $this->_filter);
+            $model->image           = Security::clean(Input::put('image'), $this->_filter);
+            $model->status          = Security::clean(Input::put('status'), $this->_filter);
+            $model->updated_at      = date('Y-m-d H:i:s',time());
+
+            $res = $model->save();
+            if ($res)
+                return $this->get_response(STATUS_OK, $model, 'Update post successful!');
+            else
+                return $this->get_response(ERROR_UPDATE_POST_FAILED, '', MSG_UPDATE_POST_FAILED);
+        } else {
+            //get validation message
+            $message = array();
+            foreach ($val->error() as $field => $error) {
+                array_push($message, array($field => $error->get_message()));
+            }
+            return $this->get_response(ERROR_VALIDATE, '', $message);
+        }
     }
 }
