@@ -141,4 +141,14 @@ class Controller_V1_Posts extends Controller_Base {
             return $this->get_response(ERROR_VALIDATE, '', $message);
         }
     }
+
+    /**
+     *
+     * Delete a post
+     * @param int $id post_id
+     * @return json format
+     */
+    public function delete_delete($id) {
+
+    }
 }
