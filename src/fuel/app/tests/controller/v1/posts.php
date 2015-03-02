@@ -246,7 +246,48 @@ class Test_Controller_V1_Posts extends TestCase {
         );
     }
 
+    /**
+     *
+     * Check permission delete post
+     * @param $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_delete_permission($data) {
+        $link   = $this->_link.'posts/2';
+        $method = 'DELETE';
+        $params = array('token' => $data->login_hash);
 
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_PERMISSION, $res->meta->code);
+    }
+
+    /**
+     *
+     * Check delete post invalid token
+     */
+    public function test_delete_post_invalid_token() {
+        $link   = $this->_link.'posts/2';
+        $method = 'DELETE';
+        $param  = array('token' => 'lkajsdf98as0f9sdfjslf9u0as9df');
+
+        $res    = $this->curl($link, $method, $param);
+        $this->assertEquals(ERROR_TOKEN_INVALID, $res->meta->code);
+    }
+
+    /**
+     *
+     * test post not exist
+     * @param $data get from test_login_ok
+     * @depends test_login_ok
+     */
+    public function test_post_not_exist($data) {
+        $link   = $this->_link.'posts/0';
+        $method = 'DELETE';
+        $params = array('token' => $data->login_hash);
+
+        $res    = $this->curl($link, $method, $params);
+        $this->assertEquals(ERROR_POST_NOT_EXIST, $res->meta->code);
+    }
     /**
      *
      * get response body from $link

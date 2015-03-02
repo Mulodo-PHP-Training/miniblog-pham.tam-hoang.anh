@@ -101,6 +101,9 @@ class Controller_V1_Posts extends Controller_Base {
 
         // Init model
         $model = Model_V1_Posts::find($id);
+        if (!$model)
+            return $this->get_response(ERROR_POST_NOT_EXIST, '', MSG_POST_NOT_EXIST);
+
         //get user id
         $user_id = Auth::get_user_id();
         // check permission
@@ -149,6 +152,31 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json format
      */
     public function delete_delete($id) {
+        // check login
+        if(!Auth::check())
+            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
 
+        // check token
+        $user = new Model_V1_Users();
+        $token = Security::clean(Input::delete('token'));
+        if (!$user->check_token($token) or $token == '') {
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
+
+        // Init model
+        $model = Model_V1_Posts::find($id);
+        if (!$model)
+            return $this->get_response(ERROR_POST_NOT_EXIST, '', MSG_POST_NOT_EXIST);
+
+        //get user id
+        $user_id = Auth::get_user_id();
+        // check permission
+        if ($model->user_id != $user_id[1])
+            return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
+
+        if ($model->delete())
+            return $this->get_response(STATUS_OK, '', 'Delete post successful!');
+        else
+            return $this->get_response(ERROR_DELETE_POST_FAILED, '', MSG_DELETE_POST_FAILED);
     }
 }

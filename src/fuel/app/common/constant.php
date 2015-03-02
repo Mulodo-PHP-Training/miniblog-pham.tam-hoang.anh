@@ -127,6 +127,10 @@ define('MSG_GET_LIST_POST_USER_NULL', 'Can not found post with user');
 define('ERROR_PERMISSION', '2508');
 define('MSG_PERMISSION', "you don't have permission update post");
 
+// ERROR POST NOT EXIST
+define('ERROR_POST_NOT_EXIST', '2509');
+define('MSG_POST_NOT_EXIST', 'The post can not found');
+
 //GET ALL COMMENT ERROR
 define('ERROR_GET_ALL_COMMENT_FAILED', '3001');
 define('MSG_GET_ALL_COMMENT_FAILED', 'Get all comment error');
