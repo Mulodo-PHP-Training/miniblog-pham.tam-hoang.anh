@@ -188,4 +188,14 @@ class Controller_V1_Posts extends Controller_Base {
             return $this->get_response(ERROR_DELETE_POST_FAILED, '', MSG_DELETE_POST_FAILED);
         }
     }
+
+    /**
+     *
+     * Get all posts
+     *
+     * @return json format
+     */
+    public function get_list_all_posts() {
+
+    }
 }
