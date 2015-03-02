@@ -106,8 +106,9 @@ class Controller_V1_Users extends Controller_Base {
             //Delete session login_hash and update token = ''
             Auth::logout();
             return $this->get_response(STATUS_OK, '', 'Logout successful!');
-        } else
+        } else {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
     }
 
     /**
@@ -126,7 +127,7 @@ class Controller_V1_Users extends Controller_Base {
         $model = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
         if ($model->check_token($token) and $token != '') {
-        	// Init validation
+            // Init validation
             $val = Validation::forge()->add_model('Model_V1_Users');
             $input = array(
                 'email'     => Input::put('email'),
@@ -158,8 +159,9 @@ class Controller_V1_Users extends Controller_Base {
                 $res = Auth::update_user($data, $user_id[1]);
                 if ($res['code'] != STATUS_OK) {
                     return $this->get_response($res['code'], '', $res['message']);
-                } else
+                } else {
                     return $this->get_response(STATUS_OK, $res['data'], 'Update user successful!');
+                }
             } else {
                 //get validation message
                 $message = array();
@@ -168,8 +170,9 @@ class Controller_V1_Users extends Controller_Base {
                 }
                 return $this->get_response(ERROR_VALIDATE, '', $message);
             }
-        } else
+        } else {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
     }
 
     /**
@@ -181,8 +184,9 @@ class Controller_V1_Users extends Controller_Base {
      */
     public function put_password() {
         // check login
-        if(!Auth::check())
+        if(!Auth::check()) {
             return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+        }
 
         // Init model
         $model = new Model_V1_Users();
@@ -208,8 +212,9 @@ class Controller_V1_Users extends Controller_Base {
                 $res = Auth::change_password($old_password, $new_password, $user_id[1]);
                 if ($res['code'] != STATUS_OK) {
                     return $this->get_response($res['code'], '', $res['message']);
-                } else
+                } else {
                     return $this->get_response(STATUS_OK, $res['data'], 'Change password successful!');
+                }
 
             } else {
                 //get validation message
@@ -219,8 +224,9 @@ class Controller_V1_Users extends Controller_Base {
                 }
                 return $this->get_response(ERROR_VALIDATE, '', $message);
             }
-        } else
-                return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        } else {
+            return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
     }
 
     /**
@@ -231,8 +237,9 @@ class Controller_V1_Users extends Controller_Base {
      */
     public function get_search() {
         $keyword = Security::clean(Input::get('keyword'), $this->_filter);
-        if(!$keyword)
+        if (!$keyword) {
             return $this->get_response(ERROR_KEYWORD_NULL, '', MSG_KEYWORD_NULL);
+        }
         // if limit not exist and not nummeric: return default: LIMIT_USER
         $limit = (Input::get('limit') and is_numeric(Input::get('limit'))) ? Security::clean(Input::get('limit'), $this->_filter) : LIMIT_USER;
         // if offset not exist and not nummeric: return default: 0
@@ -243,11 +250,13 @@ class Controller_V1_Users extends Controller_Base {
         // search_user
         $res = $model->search_user($keyword, $limit, $offset);
         // check search
-        if($res == false)
+        if ($res == false) {
             return $this->get_response(ERROR_SEARCH_USER_FAILED, '', MSG_SEARCH_USER_FAILED);
+        }
         //check result
-        if($res['total'] === 0)
+        if ($res['total'] === 0) {
             return $this->get_response(ERROR_SEARCH_USER_NOT_FOUND_RESULT, '', 'Find '.$res['total'].' results with keyword '.$keyword);
+        }
 
         return $this->get_response(STATUS_OK, $res, 'Search user success');
     }
@@ -259,8 +268,9 @@ class Controller_V1_Users extends Controller_Base {
      */
     public function get_user_info() {
         // check login
-        if(!Auth::check())
+        if (!Auth::check()) {
             return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+        }
         // Init model
         $model = new Model_V1_Users();
 
@@ -270,11 +280,13 @@ class Controller_V1_Users extends Controller_Base {
             $user_id = Auth::get_user_id();
             $user = $model->get_user_info($user_id[1]);
             // exist user
-            if($user !== false)
+            if ($user !== false) {
                 return $this->get_response(STATUS_OK, $user, 'Get information of user successfully!');
+            }
             return $this->get_response(ERROR_GET_USER_INFO_FAILED, '', MSG_GET_USER_INFO_FAILED);
-        } else
+        } else {
             return $this->get_response(ERROR_TOKEN_INVALID, '', MSG_TOKEN_INVALID);
+        }
     }
 
 }

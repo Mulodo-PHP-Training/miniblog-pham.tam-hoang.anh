@@ -41,8 +41,9 @@ class Controller_V1_Posts extends Controller_Base {
      */
     public function post_create() {
         // check login
-        if (!Auth::check())
+        if (!Auth::check()) {
             return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+        }
 
         // Init
         $model = new Model_V1_Posts();
@@ -67,10 +68,11 @@ class Controller_V1_Posts extends Controller_Base {
             $model->updated_at      = date('Y-m-d H:i:s',time());
 
             $res = $model->save();
-            if ($res)
+            if ($res) {
                 return $this->get_response(STATUS_OK, $model, 'Create post successful!');
-            else
+            } else {
                 return $this->get_response(ERROR_CREATE_POST_FAILED, '', MSG_CREATE_POST_FAILED);
+            }
         } else {
             //get validation message
             $message = array();
@@ -101,14 +103,16 @@ class Controller_V1_Posts extends Controller_Base {
 
         // Init model
         $model = Model_V1_Posts::find($id);
-        if (!$model)
+        if (!$model) {
             return $this->get_response(ERROR_POST_NOT_EXIST, '', MSG_POST_NOT_EXIST);
+        }
 
         //get user id
         $user_id = Auth::get_user_id();
         // check permission
-        if ($model->user_id != $user_id[1])
+        if ($model->user_id != $user_id[1]) {
             return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
+        }
 
          // add validation
         $val = Validation::forge()->add_model('Model_V1_Posts');
@@ -131,10 +135,11 @@ class Controller_V1_Posts extends Controller_Base {
             $model->updated_at      = date('Y-m-d H:i:s',time());
 
             $res = $model->save();
-            if ($res)
+            if ($res) {
                 return $this->get_response(STATUS_OK, $model, 'Update post successful!');
-            else
+            } else {
                 return $this->get_response(ERROR_UPDATE_POST_FAILED, '', MSG_UPDATE_POST_FAILED);
+            }
         } else {
             //get validation message
             $message = array();
@@ -153,8 +158,9 @@ class Controller_V1_Posts extends Controller_Base {
      */
     public function delete_delete($id) {
         // check login
-        if(!Auth::check())
+        if(!Auth::check()) {
             return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
+        }
 
         // check token
         $user = new Model_V1_Users();
@@ -165,18 +171,21 @@ class Controller_V1_Posts extends Controller_Base {
 
         // Init model
         $model = Model_V1_Posts::find($id);
-        if (!$model)
+        if (!$model) {
             return $this->get_response(ERROR_POST_NOT_EXIST, '', MSG_POST_NOT_EXIST);
+        }
 
         //get user id
         $user_id = Auth::get_user_id();
         // check permission
-        if ($model->user_id != $user_id[1])
+        if ($model->user_id != $user_id[1]) {
             return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
+        }
 
-        if ($model->delete())
+        if ($model->delete()) {
             return $this->get_response(STATUS_OK, '', 'Delete post successful!');
-        else
+        } else {
             return $this->get_response(ERROR_DELETE_POST_FAILED, '', MSG_DELETE_POST_FAILED);
+        }
     }
 }
