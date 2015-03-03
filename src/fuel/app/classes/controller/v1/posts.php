@@ -10,6 +10,12 @@ class Controller_V1_Posts extends Controller_Base {
 
     private $_filter = array('strip_tags', 'htmlentities');
 
+    private $_order = array(
+                        'newest' => 'created_at',
+                        'name' => 'title',
+                        'most_comment' => array('comment.created_at' => 'desc', 'created_at' => 'desc')
+    );
+
     /**
      *
      * get list all posts for user
@@ -196,6 +202,28 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json format
      */
     public function get_list_all_posts() {
+        //Init model
+        $model  = new Model_V1_Posts();
 
+         // if limit not exist and not nummeric: return default: LIMIT_USER
+        $limit = (Input::get('limit') and is_numeric(Input::get('limit'))) ? Security::clean(Input::get('limit'), $this->_filter) : LIMIT_POST;
+
+        // if offset not exist and not nummeric: return default: 0
+        $offset = (Input::get('offset') and is_numeric(Input::get('offset'))) ? Security::clean(Input::get('offset'), $this->_filter) : 0;
+
+        // if offset not exist and not nummeric: return default: 0
+        $offset = (Input::get('offset') and is_numeric(Input::get('offset'))) ? Security::clean(Input::get('offset'), $this->_filter) : 0;
+
+        // if order not exist: return default: date
+        $input_order = Security::clean(Input::get('order'), $this->_filter);
+        $order = ($input_order and isset($this->_order[$input_order])) ? $this->_order[$input_order]: $this->_order['newest'];
+
+        // get list posts
+        $posts   = $model->get_list_all_posts($limit, $offset, $order);
+
+        if ($posts) {
+            return $this->get_response(STATUS_OK, $posts, 'OK');
+        }
+        return $this->get_response(ERROR_GET_ALL_POST_FAILED, '', MSG_GET_ALL_POST_FAILED);
     }
 }

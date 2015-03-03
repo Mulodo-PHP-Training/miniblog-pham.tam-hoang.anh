@@ -288,6 +288,19 @@ class Test_Controller_V1_Posts extends TestCase {
         $res    = $this->curl($link, $method, $params);
         $this->assertEquals(ERROR_POST_NOT_EXIST, $res->meta->code);
     }
+
+    /**
+     *
+     * get list all posts true
+     */
+    public function test_get_list_all_posts_ok() {
+        $link   = $this->_link.'posts';
+        $method = 'GET';
+
+        $res    = $this->curl($link, $method);
+        $this->assertEquals(STATUS_OK, $res->meta->code);
+    }
+
     /**
      *
      * get response body from $link

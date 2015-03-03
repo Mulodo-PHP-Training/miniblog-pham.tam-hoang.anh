@@ -33,10 +33,20 @@ class Test_Model_V1_Posts extends TestCase {
      *
      * test list all posts of user fail
      */
-    public function test_get_list_posts_for_user_fail() {
+    public function test_get_list_posts_for_user_empty() {
         $user_id = 17;
         $posts = $this->_model->get_list_posts_for_user($user_id);
 
-        $this->assertFalse($posts);
+        $this->assertEquals($posts['total'], 0);
+    }
+
+    /**
+     *
+     * test list all posts true
+     */
+    public function test_get_list_posts_ok() {
+        $posts = $this->_model->get_list_all_posts();
+
+        $this->assertNotEmpty($posts);
     }
 }

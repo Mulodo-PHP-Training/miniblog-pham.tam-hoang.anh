@@ -59,6 +59,14 @@ class Model_V1_Posts extends Orm\Model {
         )
     );
 
+    protected static $_has_many = array(
+        'comment' => array(
+            'model_to'  => 'Model_V1_Comments',
+            'key_form'  => 'id',
+            'key_to'    => 'post_id'
+        )
+    );
+
     /**
      *
      * Get list all posts of user
@@ -67,15 +75,18 @@ class Model_V1_Posts extends Orm\Model {
      * @param int $offset
      */
     public function get_list_posts_for_user($user_id, $limit = LIMIT_POST, $offset = 0) {
-        $model = Model_V1_Posts::query()
+        $query = Model_V1_Posts::query()
                 ->where('user_id', '=', $user_id)
                 ->where('status', '=', 1)
-                ->order_by('created_at', 'desc')->get();
+                ->order_by('created_at', 'desc');
 
-        if($model) {
+        if ($query) {
+            $total = $query->count();
+            $model = $query->limit($limit)->offset($offset)->get();
             $posts = array();
-            foreach ($model as $value)
+            foreach ($model as $value) {
                 $posts[] = $value;
+            }
             $user  = Model_V1_Users::find($user_id);
 
             $res = array(
@@ -83,10 +94,48 @@ class Model_V1_Posts extends Orm\Model {
                 'posts' => $posts,
                 'limit'     => $limit,
                 'offset'    => $offset,
-                'total'     => count($posts)
+                'total'     => $total
             );
             return $res;
         }
+        return false;
+    }
+
+    /**
+     *
+     * Get list all posts
+     * @param int $limit
+     * @param int $offset
+     * @param string $order_by
+     *
+     * @return array
+     */
+    public function get_list_all_posts($limit = LIMIT_POST, $offset = 0, $order_by = 'created_at') {
+        $query = Model_V1_Posts::query()
+                ->related('user')
+                ->related('comment')
+                ->where('status', '=', 1)
+                ->order_by($order_by, 'desc');
+
+        if ($query) {
+            //get total post
+            $total = $query->count();
+            // get post with limit
+            $model = $query->rows_limit($limit)->offset($offset)->get();
+            $posts = array();
+            foreach ($model as $value) {
+                $posts[] = $value;
+            }
+
+            $res = array(
+                'posts' => $posts,
+                'limit'     => $limit,
+                'offset'    => $offset,
+                'total'     => $total
+            );
+            return $res;
+        }
+
         return false;
     }
 }

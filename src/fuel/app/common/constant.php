@@ -125,7 +125,7 @@ define('MSG_GET_LIST_POST_USER_NULL', 'Can not found post with user');
 
 // ERROR PERMISSION
 define('ERROR_PERMISSION', '2508');
-define('MSG_PERMISSION', "you don't have permission update post");
+define('MSG_PERMISSION', "you don't have permission");
 
 // ERROR POST NOT EXIST
 define('ERROR_POST_NOT_EXIST', '2509');
