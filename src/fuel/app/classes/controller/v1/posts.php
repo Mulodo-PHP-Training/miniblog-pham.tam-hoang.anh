@@ -32,8 +32,12 @@ class Controller_V1_Posts extends Controller_Base {
         // if offset not exist and not nummeric: return default: 0
         $offset = (Input::get('offset') and is_numeric(Input::get('offset'))) ? Security::clean(Input::get('offset'), $this->_filter) : 0;
 
+        // if order not exist: return default: date
+        $input_order = Security::clean(Input::get('order'), $this->_filter);
+        $order = ($input_order and isset($this->_order[$input_order])) ? $this->_order[$input_order]: $this->_order['newest'];
+
         // get list posts
-        $posts   = $model->get_list_posts_for_user($user_id, $limit, $offset);
+        $posts   = $model->get_list_posts_for_user($user_id, $limit, $offset, $order);
         if ($posts)
             return $this->get_response(STATUS_OK, $posts, 'OK');
         return $this->get_response(ERROR_GET_LIST_POST_USER_NULL, '', MSG_GET_LIST_POST_USER_NULL);

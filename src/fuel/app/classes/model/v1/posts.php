@@ -73,12 +73,14 @@ class Model_V1_Posts extends Orm\Model {
      * @param int $user_id
      * @param int $limit
      * @param int $offset
+     * @param string $order_by
      */
-    public function get_list_posts_for_user($user_id, $limit = LIMIT_POST, $offset = 0) {
+    public function get_list_posts_for_user($user_id, $limit = LIMIT_POST, $offset = 0, $order_by = 'created_at') {
         $query = Model_V1_Posts::query()
+                ->related('comment')
                 ->where('user_id', '=', $user_id)
                 ->where('status', '=', 1)
-                ->order_by('created_at', 'desc');
+                ->order_by($order_by, 'desc');
 
         if ($query) {
             $total = $query->count();
