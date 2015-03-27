@@ -147,6 +147,10 @@ define('MSG_UPDATE_COMMENT_FAILED', 'Update comment error');
 define('ERROR_DELETE_COMMENT_FAILED', '3004');
 define('MSG_DELETE_COMMENT_FAILED', 'Delete comment error');
 
+// ERROR COMMENT NOT EXIST
+define('ERROR_COMMENT_NOT_EXIST', '3005');
+define('MSG_COMMENT_NOT_EXIST', 'The comment can not found');
+
 // LIMIT_USER
 define('LIMIT_USER', 15);
 

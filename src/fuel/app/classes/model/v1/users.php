@@ -82,6 +82,11 @@ class Model_V1_Users extends Orm\Model {
             'model_to'  => 'Model_V1_Posts',
             'key_form'  => 'id',
             'key_to'    => 'user_id'
+        ),
+        'comment' => array(
+            'model_to'  => 'Model_V1_Comments',
+            'key_form'  => 'id',
+            'key_to'    => 'user_id'
         )
     );
 
