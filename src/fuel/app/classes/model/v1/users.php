@@ -74,4 +74,77 @@ class Model_V1_Users extends Orm\Model {
     );
 
     protected static $_table_name = 'user';
+
+    protected static $_created_at = 'created_at';
+    protected static $_updated_at = 'updated_at';
+    protected static $_has_many = array(
+        'post' => array(
+            'model_to'  => 'Model_V1_Posts',
+            'key_form'  => 'id',
+            'key_to'    => 'user_id'
+        ),
+        'comment' => array(
+            'model_to'  => 'Model_V1_Comments',
+            'key_form'  => 'id',
+            'key_to'    => 'user_id'
+        )
+    );
+
+    /**
+     *
+     * check token
+     * @param $token
+     * @return bool
+     */
+    public function check_token($token) {
+        $model = new Model_V1_Users();
+        $res = $model->query()->where('login_hash', $token)->count();
+        if($res > 0)
+            return true;
+        return false;
+
+    }
+
+    /**
+     *
+     * Search user by username, firstname, lastname
+     * @param string $keyword
+     * @param int $limit
+     * @param int $offset
+     */
+    public function search_user($keyword, $limit = LIMIT_USER, $offset = 0) {
+        // SQL
+        $sql = sprintf("SELECT * FROM user WHERE MATCH(username, firstname, lastname) AGAINST('%s') order by created_at desc limit %d offset %d", $keyword, $limit, $offset);
+        $user = DB::query($sql)->as_object()->execute();
+        //check isset user
+        if($user) {
+            // list user
+            $item = array();
+            foreach ($user as $value) {
+                $item[] = $value;
+            }
+            //response
+            $data = array(
+                'item'      => $item,
+                'limit'     => $limit,
+                'offset'    => $offset,
+                'total'     => count($user)
+            );
+            return $data;
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * Get user information
+     * @param int $id user_id
+     */
+    public function get_user_info($id) {
+        $user = Model_V1_Users::find($id);
+        if($user)
+            return $user;
+        return false;
+    }
 }
