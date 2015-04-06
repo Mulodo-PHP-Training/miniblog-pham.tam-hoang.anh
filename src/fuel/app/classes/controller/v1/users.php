@@ -66,11 +66,6 @@ class Controller_V1_Users extends Controller_Base {
      * @return json format
      */
     public function post_signin() {
-        // check user login?
-        if (Auth::check()) { // yes
-            $response = $this->get_response(ERROR_LOGGED_USER, '', MSG_LOGGED_USER);
-            return $response;
-        }
         // get params
         $username = Security::clean(Input::param('username'), $this->_filter);
         $password = Security::clean(Input::param('password'), $this->_filter);
@@ -96,10 +91,6 @@ class Controller_V1_Users extends Controller_Base {
      * @return json format
      */
     public function put_logout() {
-        // Check login
-        if(!Auth::check())
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-
         $model = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
         if ($model->check_token($token) and $token != '') {
@@ -119,10 +110,6 @@ class Controller_V1_Users extends Controller_Base {
      * @return json format
      */
     public function put_update() {
-        // check login
-        if(!Auth::check())
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-
         // Init
         $model = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
@@ -154,9 +141,9 @@ class Controller_V1_Users extends Controller_Base {
                         'mobile'    => Security::clean(Input::param('mobile'), $this->_filter)
                     )
                 );
-                $user_id = Auth::get_user_id();
+                $user_id = Security::clean(Input::put('user_id'));
                 // Update user
-                $res = Auth::update_user($data, $user_id[1]);
+                $res = Auth::update_user($data, $user_id);
                 if ($res['code'] != STATUS_OK) {
                     return $this->get_response($res['code'], '', $res['message']);
                 } else {
@@ -183,11 +170,6 @@ class Controller_V1_Users extends Controller_Base {
      * return json format
      */
     public function put_password() {
-        // check login
-        if(!Auth::check()) {
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-        }
-
         // Init model
         $model = new Model_V1_Users();
 
@@ -207,9 +189,9 @@ class Controller_V1_Users extends Controller_Base {
                     return $this->get_response(ERROR_PWD_NOT_MATCH, '', MSG_PWD_NOT_MATCH);
                 }
 
-                $user_id = Auth::get_user_id();
+                $user_id = Security::clean(Input::put('user_id'));
                 // Change password
-                $res = Auth::change_password($old_password, $new_password, $user_id[1]);
+                $res = Auth::change_password($old_password, $new_password, $user_id);
                 if ($res['code'] != STATUS_OK) {
                     return $this->get_response($res['code'], '', $res['message']);
                 } else {
@@ -267,18 +249,14 @@ class Controller_V1_Users extends Controller_Base {
      * return json format
      */
     public function get_user_info() {
-        // check login
-        if (!Auth::check()) {
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-        }
         // Init model
         $model = new Model_V1_Users();
 
         $token = Security::clean(Input::get('token'));
          //check token
         if ($model->check_token($token) and $token != '') {
-            $user_id = Auth::get_user_id();
-            $user = $model->get_user_info($user_id[1]);
+            $user_id = Security::clean(Input::get('user_id'));
+            $user = $model->get_user_info($user_id);
             // exist user
             if ($user !== false) {
                 return $this->get_response(STATUS_OK, $user, 'Get information of user successfully!');
