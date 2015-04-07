@@ -50,11 +50,6 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json response
      */
     public function post_create() {
-        // check login
-        if (!Auth::check()) {
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-        }
-
         // Init
         $model = new Model_V1_Posts();
 
@@ -67,12 +62,12 @@ class Controller_V1_Posts extends Controller_Base {
         }
 
         if ($val->run()) {
-            $user_id = Auth::get_user_id();
+            $user_id = Security::clean(Input::post('user_id'));
             $model->title           = Security::clean(Input::post('title'), $this->_filter);
             $model->description     = Security::clean(Input::post('description'), $this->_filter);
             $model->content         = Security::clean(Input::post('content'), $this->_filter);
             $model->image           = Security::clean(Input::post('image'), $this->_filter);
-            $model->user_id         = $user_id[1];
+            $model->user_id         = $user_id;
             $model->status          = Security::clean(Input::post('status'), $this->_filter);
             $model->created_at      = date('Y-m-d H:i:s',time());
             $model->updated_at      = date('Y-m-d H:i:s',time());
@@ -96,14 +91,10 @@ class Controller_V1_Posts extends Controller_Base {
     /**
      *
      * Update post
-     * @param int $id
+     * @param int $id post id
      * @return json format
      */
     public function put_update($id) {
-        // check login
-        if(!Auth::check())
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-
         // check token
         $user = new Model_V1_Users();
         $token = Security::clean(Input::put('token'));
@@ -118,9 +109,9 @@ class Controller_V1_Posts extends Controller_Base {
         }
 
         //get user id
-        $user_id = Auth::get_user_id();
+        $user_id = Security::clean(Input::put('user_id'));
         // check permission
-        if ($model->user_id != $user_id[1]) {
+        if ($model->user_id != $user_id) {
             return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
         }
 
@@ -167,11 +158,6 @@ class Controller_V1_Posts extends Controller_Base {
      * @return json format
      */
     public function delete_delete($id) {
-        // check login
-        if(!Auth::check()) {
-            return $this->get_response(ERROR_USER_NOT_LOGIN, '', MSG_USER_NOT_LOGIN);
-        }
-
         // check token
         $user = new Model_V1_Users();
         $token = Security::clean(Input::delete('token'));
@@ -186,9 +172,9 @@ class Controller_V1_Posts extends Controller_Base {
         }
 
         //get user id
-        $user_id = Auth::get_user_id();
+        $user_id = Security::clean(Input::delete('user_id'));
         // check permission
-        if ($model->user_id != $user_id[1]) {
+        if ($model->user_id != $user_id) {
             return $this->get_response(ERROR_PERMISSION, '', MSG_PERMISSION);
         }
 
