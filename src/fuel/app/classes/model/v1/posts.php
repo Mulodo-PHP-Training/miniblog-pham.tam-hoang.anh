@@ -123,7 +123,7 @@ class Model_V1_Posts extends Orm\Model {
             //get total post
             $total = $query->count();
             // get post with limit
-            $model = $query->rows_limit($limit)->offset($offset)->get();
+            $model = $query->rows_limit($limit)->rows_offset($offset)->get();
             $posts = array();
             foreach ($model as $value) {
                 $posts[] = $value;
