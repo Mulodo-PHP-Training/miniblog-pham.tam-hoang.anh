@@ -133,7 +133,8 @@ class Model_V1_Posts extends Orm\Model {
                 'posts' => $posts,
                 'limit'     => $limit,
                 'offset'    => $offset,
-                'total'     => $total
+                'total'     => $total,
+                'order'     => $order_by
             );
             return $res;
         }
