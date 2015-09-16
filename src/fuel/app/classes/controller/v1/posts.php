@@ -216,4 +216,19 @@ class Controller_V1_Posts extends Controller_Base {
         }
         return $this->get_response(ERROR_GET_ALL_POST_FAILED, '', MSG_GET_ALL_POST_FAILED);
     }
+
+    /**
+     * Get a post
+     *
+     * @return json format
+     */
+
+    public function get_view($id) {
+    	$model = new Model_V1_Comments();
+        $comments = $model->get_list_comments_for_post($id);
+        if (!empty($comments['post'])) {
+        	return $this->get_response(STATUS_OK, $comments, 'OK');
+        }
+        return $this->get_response(ERROR_POST_NOT_EXIST, '', MSG_POST_NOT_EXIST);
+    }
 }

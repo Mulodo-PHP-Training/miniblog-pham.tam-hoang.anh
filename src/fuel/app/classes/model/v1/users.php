@@ -31,7 +31,6 @@ class Model_V1_Users extends Orm\Model {
         'avatar' => array(
             'data_type'        => 'varchar',
             'label'            => 'Avatar',
-            'validation'       => array('max_length' => array(100))
         ),
         'birthday' => array(
             'data_type'        => 'varchar',
@@ -116,6 +115,8 @@ class Model_V1_Users extends Orm\Model {
         // SQL
         $sql = sprintf("SELECT * FROM user WHERE MATCH(username, firstname, lastname) AGAINST('%s') order by created_at desc limit %d offset %d", $keyword, $limit, $offset);
         $user = DB::query($sql)->as_object()->execute();
+        $sql_all = sprintf("SELECT * FROM user WHERE MATCH(username, firstname, lastname) AGAINST('%s') order by created_at desc", $keyword);
+        $user_all = DB::query($sql_all)->as_object()->execute();
         //check isset user
         if($user) {
             // list user
@@ -128,7 +129,7 @@ class Model_V1_Users extends Orm\Model {
                 'item'      => $item,
                 'limit'     => $limit,
                 'offset'    => $offset,
-                'total'     => count($user)
+                'total'     => count($user_all)
             );
             return $data;
         }

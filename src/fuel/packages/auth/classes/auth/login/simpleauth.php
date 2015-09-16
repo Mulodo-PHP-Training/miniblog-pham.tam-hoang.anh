@@ -362,7 +362,7 @@ class Auth_Login_Simpleauth extends \Auth_Login_Driver {
             ->execute(\Config::get('simpleauth.db_connection'));
 
         // Refresh user
-        if ($this->user['id'] == $id) {
+        if ($current_values[0]['id'] == $id) {
             $this->user = \DB::select_array(\Config::get('simpleauth.table_columns', array('*')))
                 ->where('id', '=', $id)
                 ->from(\Config::get('simpleauth.table_name'))

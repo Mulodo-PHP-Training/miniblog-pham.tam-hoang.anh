@@ -73,9 +73,13 @@ class Model_V1_Comments extends Orm\Model {
                 $comments[] = $value;
             }
             $post  = Model_V1_Posts::find($post_id);
-
+            $user = Model_V1_Users::find($post->user_id);
+            if (!$post && !$user) {
+                return false;
+            }
             $res = array(
                 'post'  => $post,
+                'user'  => $user,
                 'comments' => $comments,
                 'limit'     => $limit,
                 'offset'    => $offset,

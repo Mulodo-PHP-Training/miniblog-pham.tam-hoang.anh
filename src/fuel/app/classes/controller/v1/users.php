@@ -237,10 +237,10 @@ class Controller_V1_Users extends Controller_Base {
         }
         //check result
         if ($res['total'] === 0) {
-            return $this->get_response(ERROR_SEARCH_USER_NOT_FOUND_RESULT, '', 'Find '.$res['total'].' results with keyword '.$keyword);
+            return $this->get_response(ERROR_SEARCH_USER_NOT_FOUND_RESULT, '', 'result not found');
         }
 
-        return $this->get_response(STATUS_OK, $res, 'Search user success');
+        return $this->get_response(STATUS_OK, $res, 'Find <span class="red">'.$res['total'].'</span> results with keyword <span class="red">'.$keyword.'</span>');
     }
 
     /**
